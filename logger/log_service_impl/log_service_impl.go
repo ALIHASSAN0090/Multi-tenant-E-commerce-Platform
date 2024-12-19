@@ -2,7 +2,8 @@ package logger
 
 import (
 	"context"
-	"ecommerce-platform/logger/log_repo"
+
+	logger "ecommerce-platform/logger"
 	"fmt"
 	"os"
 
@@ -17,21 +18,21 @@ type AppLogger struct {
 
 type aboveCallerKey struct{}
 
-func (l *AppLogger) WithAboveCaller(i int) log_repo.IAppLogger {
+func (l *AppLogger) WithAboveCaller(i int) logger.IAppLogger {
 	return &AppLogger{
 		logger: l.logger,
 		ctx:    context.WithValue(l.ctx, aboveCallerKey{}, i),
 	}
 }
 
-func (l *AppLogger) With(ctx context.Context) log_repo.IAppLogger {
+func (l *AppLogger) With(ctx context.Context) logger.IAppLogger {
 	return &AppLogger{
 		logger: l.logger,
 		ctx:    ctx,
 	}
 }
 
-func (l *AppLogger) WithValue(key, value interface{}) log_repo.IAppLogger {
+func (l *AppLogger) WithValue(key, value interface{}) logger.IAppLogger {
 	return &AppLogger{
 		ctx:    context.WithValue(l.ctx, key, value),
 		logger: l.logger,
@@ -102,11 +103,11 @@ func (l *AppLogger) captureMsg(msg string) {
 	sentry.CaptureMessage(msg)
 }
 
-func New() log_repo.IAppLogger {
+func New() logger.IAppLogger {
 	return NewWithDebugLevel(log.DebugLevel)
 }
 
-func NewWithDebugLevel(debugLevel log.Level) log_repo.IAppLogger {
+func NewWithDebugLevel(debugLevel log.Level) logger.IAppLogger {
 	logger := log.New()
 	logger.SetOutput(os.Stdout)
 	logger.SetLevel(debugLevel)

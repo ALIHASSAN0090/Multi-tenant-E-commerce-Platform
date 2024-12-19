@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -39,4 +40,12 @@ func SetFieldValue(fieldValue reflect.Value, value, envTag string) error {
 		}
 	}
 	return nil
+}
+
+func GetEnvValue(envTag, defaultTag string) string {
+	value := strings.TrimSpace(os.Getenv(envTag))
+	if value == "" && defaultTag != "" {
+		value = defaultTag
+	}
+	return value
 }

@@ -2,27 +2,16 @@
 package config
 
 import (
+	"ecommerce-platform/models"
 	"ecommerce-platform/utils"
 	"fmt"
 	"log"
 	"reflect"
 )
 
-var AppConfig = IConfig{}
+var AppConfig = models.IConfig{}
 
-type IConfig struct {
-	RawVars     map[string]string
-	APP_ADDRESS string `env:"APP_ADDRESS" required:"true" default:"8005"`
-	DB_HOST     string `env:"PG_HOST" required:"true" default:"localhost"`
-	DB_PORT     string `env:"PG_PORT" required:"true" default:"5432"`
-	DB_DATABASE string `env:"PG_DB" required:"true" default:"projectgolang"`
-	DB_USERNAME string `env:"PG_USER" required:"true" default:"postgres"`
-	DB_PASSWORD string `env:"PG_PASSWORD" required:"true" default:"newpassword"`
-	DB_SSL_MODE string `env:"DB_SSL_MODE" required:"true" default:"disable"`
-	JWT_SECRET  string `env:"JWT_SECRET" required:"true" default:"dflakf@!£@"`
-}
-
-func (c *IConfig) InitializeConfig() error {
+func InitializeConfig(c *models.IConfig) error {
 	c.RawVars = make(map[string]string)
 	v := reflect.ValueOf(c).Elem()
 	t := reflect.TypeOf(c).Elem()
@@ -52,7 +41,7 @@ func (c *IConfig) InitializeConfig() error {
 }
 
 func InitConfig() {
-	if err := AppConfig.InitializeConfig(); err != nil {
+	if err := InitializeConfig(&AppConfig); err != nil {
 		log.Fatalf("Configuration initialization failed: %v", err)
 	}
 }
