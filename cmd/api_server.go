@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"context"
+	"ecommerce-platform/Dao"
+	"ecommerce-platform/app"
 	config "ecommerce-platform/configs"
 	logger "ecommerce-platform/logger/log_service_impl"
 	"fmt"
@@ -39,7 +41,7 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 
 	// ValidationService := Validation.NewValidationService()
 
-	AuthDao := dao.NewAuthDao(postgresDB)
+	AuthDao := Dao.NewAuthDao(postgresDB)
 
 	logger.Info("Starting Api Server")
 
