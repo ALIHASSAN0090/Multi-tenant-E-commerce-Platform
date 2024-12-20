@@ -13,7 +13,7 @@ func (a *AuthServiceImpl) SignUp(ctx *gin.Context, req *models.Users) (bool, err
 
 	hashed, err := utils.HashPassword(req.Password)
 	if err != nil {
-		a.logger.Info("Error hashing password", err)
+		a.logger.Error("Error hashing password: ", err)
 		return false, err
 	}
 
@@ -42,4 +42,8 @@ func (a *AuthServiceImpl) SignUp(ctx *gin.Context, req *models.Users) (bool, err
 	}
 
 	return userExists, nil
+}
+
+func (a *AuthServiceImpl) CheckUserExists(req *models.Users) (bool, error) {
+	return a.authDao.CheckUserExists(req)
 }

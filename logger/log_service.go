@@ -1,4 +1,4 @@
-package log_repo
+package dao_service_impl
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-package logger
+package log_service_impl
 
 import (
 	"context"

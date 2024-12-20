@@ -1,27 +1,24 @@
 package router
 
 import (
-	validation "ecommerce-platform/Validation"
-	authservice "ecommerce-platform/controllers/auth_service"
-	log "ecommerce-platform/logger"
-	adminroutes "ecommerce-platform/router/routes/admin_routes"
-	clientroutes "ecommerce-platform/router/routes/client_routes"
-	userroutes "ecommerce-platform/router/routes/user_routes"
+	"ecommerce-platform/Validation"
+	"ecommerce-platform/controllers/auth_service"
+	dao_service_impl "ecommerce-platform/logger"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Router struct {
 	Engine      *gin.Engine
-	AuthService authservice.AuthService
-	Logger      log.IAppLogger
-	Val         validation.ValidationService
+	AuthService auth_service.AuthService
+	Logger      dao_service_impl.IAppLogger
+	Val         Validation.ValidationService
 }
 
 func NewRouter(
-	logger log.IAppLogger,
-	authService authservice.AuthService,
-	valService validation.ValidationService,
+	logger dao_service_impl.IAppLogger,
+	authService auth_service.AuthService,
+	valService Validation.ValidationService,
 ) *Router {
 	engine := gin.Default()
 	router := &Router{
@@ -30,8 +27,6 @@ func NewRouter(
 		Logger:      logger,
 		Val:         valService,
 	}
-	adminroutes.AdminRoutes(router)
-	clientroutes.ClientRoutes(router)
-	userroutes.UserRoutes(router)
+	router.SetupRoutes()
 	return router
 }

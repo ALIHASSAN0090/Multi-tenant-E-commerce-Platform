@@ -3,11 +3,11 @@ package auth_service_impl
 import (
 	dao "ecommerce-platform/Dao"
 	authservice "ecommerce-platform/controllers/auth_service"
-	log "ecommerce-platform/logger"
+	logger "ecommerce-platform/logger"
 )
 
 type AuthServiceImpl struct {
-	logger  log.IAppLogger
+	logger  logger.IAppLogger
 	authDao dao.AuthDao
 }
 
@@ -19,6 +19,6 @@ func NewAuthService(input NewAuthServiceImpl) authservice.AuthService {
 }
 
 type NewAuthServiceImpl struct {
-	Logger  log.IAppLogger
+	Logger  logger.IAppLogger
 	AuthDao dao.AuthDao
 }

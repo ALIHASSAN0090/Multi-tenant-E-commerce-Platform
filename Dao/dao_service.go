@@ -2,7 +2,6 @@ package Dao
 
 import (
 	"database/sql"
-	"ecommerce-platform/Dao/dao_service_impl"
 	"ecommerce-platform/models"
 )
 
@@ -12,7 +11,7 @@ type AuthDao interface {
 }
 
 func NewAuthDao(db *sql.DB) AuthDao {
-	return &dao_service_impl.AuthDaoImp{
+	return &AuthDaoImp{
 		db: db,
 	}
 }

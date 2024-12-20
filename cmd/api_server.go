@@ -8,6 +8,7 @@ import (
 	config "ecommerce-platform/configs"
 	AuthServiceImpl "ecommerce-platform/controllers/auth_service/auth_service_impl"
 	logger "ecommerce-platform/logger/log_service_impl"
+	"ecommerce-platform/router"
 	"fmt"
 	"net/http"
 	"os"
@@ -19,7 +20,7 @@ import (
 )
 
 var ApiServerCommand = &cobra.Command{
-	Use:   "Api",
+	Use:   "api",
 	Short: "Api Starts Server",
 	Run:   ExecuteApi,
 }
