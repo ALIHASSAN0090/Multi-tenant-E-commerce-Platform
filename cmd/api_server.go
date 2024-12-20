@@ -3,8 +3,10 @@ package cmd
 import (
 	"context"
 	"ecommerce-platform/Dao"
+	"ecommerce-platform/Validation"
 	"ecommerce-platform/app"
 	config "ecommerce-platform/configs"
+	AuthServiceImpl "ecommerce-platform/controllers/auth_service/auth_service_impl"
 	logger "ecommerce-platform/logger/log_service_impl"
 	"fmt"
 	"net/http"
@@ -39,13 +41,18 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 		logger.Info("Connected to postgres!")
 	}
 
-	// ValidationService := Validation.NewValidationService()
+	ValidationService := Validation.NewValidationService()
 
 	AuthDao := Dao.NewAuthDao(postgresDB)
 
 	logger.Info("Starting Api Server")
 
-	// AuthService := AuthServiceImpl.NewAuthService(AuthServiceImpl.NewAuthServiceImpl)
+	AuthService := AuthServiceImpl.NewAuthService(AuthServiceImpl.NewAuthServiceImpl{
+		Logger:  logger,
+		AuthDao: AuthDao,
+	})
+
+	router := router.NewRouter(logger, AuthService, ValidationService)
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGABRT, os.Interrupt)

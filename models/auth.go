@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type SignUpReq struct {
 	UserName    string `json:"user_name" validate:"required,min=2,max=100"`
