@@ -2,19 +2,22 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 )
 
-func Execute() error {
-	return rootCmd.Execute()
+var rootCmd = &cobra.Command{
+	Use: "ecommerce-platform",
 }
 
-func Init() {
+func init() {
 	fmt.Println(14)
 	rootCmd.AddCommand(ApiServerCommand)
 }
 
-var rootCmd = &cobra.Command{
-	Use: "ecommerce-platform",
+func Execute() {
+	if err := rootCmd.Execute(); err != nil {
+		log.Fatalf("Error executing root command: %v", err)
+	}
 }

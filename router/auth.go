@@ -2,6 +2,7 @@ package router
 
 import (
 	"ecommerce-platform/models"
+	"ecommerce-platform/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,11 +21,11 @@ func (r *Router) SignUp(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": errMess})
 		return
 	}
-	// if err := utils.Decode(req, &signUp); err != nil {
-	// 	r.Logger.Info("failed to decode signup response: %v", err)
-	// 	c.JSON(http.StatusInternalServerError, nil)
-	// 	return
-	// }
+	if err := utils.Decode(req, &signUp); err != nil {
+		r.Logger.Info("failed to decode signup response: %v", err)
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 
 	if userExists, err := r.AuthService.SignUp(c, signUp); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
