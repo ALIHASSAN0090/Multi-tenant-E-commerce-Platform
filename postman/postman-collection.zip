@@ -1,0 +1,106 @@
+{
+	"info": {
+		"_postman_id": "b1d777e5-8265-44ad-82f8-991d000c5e59",
+		"name": "Gocommerce",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26799611"
+	},
+	"item": [
+		{
+			"name": "public routes",
+			"item": [
+				{
+					"name": "health check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8005/public/health-check",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"public",
+								"health-check"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "admin routes",
+			"item": [
+				{
+					"name": "health check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8005/admin/health-check",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"admin",
+								"health-check"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "client routes",
+			"item": [
+				{
+					"name": "health check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8005/client/health-check",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"client",
+								"health-check"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user routes",
+			"item": [
+				{
+					"name": "health check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8005/user/health-check",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"user",
+								"health-check"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

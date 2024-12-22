@@ -44,3 +44,10 @@ func (r *Router) SignUp(c *gin.Context) {
 		Status:  http.StatusOK,
 	})
 }
+
+func (r *Router) HealthCheck(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "healthy",
+		"message": "API is running smoothly",
+	})
+}

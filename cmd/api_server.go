@@ -6,6 +6,7 @@ import (
 	"ecommerce-platform/Validation"
 	"ecommerce-platform/app"
 	config "ecommerce-platform/configs"
+	AdminControllerImpl "ecommerce-platform/controllers/admin_controller/admin_controller_impl"
 	AuthServiceImpl "ecommerce-platform/controllers/auth_service/auth_service_impl"
 	logger "ecommerce-platform/logger/log_service_impl"
 	"ecommerce-platform/router"
@@ -45,6 +46,7 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 	ValidationService := Validation.NewValidationService()
 
 	AuthDao := Dao.NewAuthDao(postgresDB)
+	AdminDao := Dao.NewAdminDao(postgresDB)
 
 	logger.Info("Starting Api Server")
 
@@ -53,7 +55,13 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 		AuthDao: AuthDao,
 	})
 
-	router := router.NewRouter(logger, AuthService, ValidationService)
+	AdminController := AdminControllerImpl.NewAdminController(AdminControllerImpl.NewAdminControllerImpl{
+		Logger:   logger,
+		AuthDao:  AuthDao,
+		AdminDao: AdminDao,
+	})
+
+	router := router.NewRouter(logger, AuthService, ValidationService, AdminController)
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGABRT, os.Interrupt)

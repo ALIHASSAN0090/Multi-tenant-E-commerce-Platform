@@ -10,25 +10,27 @@ func (r *Router) SetupRoutes() {
 
 	adminGroup := r.Engine.Group("/admin")
 	{
-
-		adminGroup.GET("/health-check", r.SignUp)
+		adminGroup.Use(middleware.Auth([]string{"admin"}))
+		adminGroup.GET("/health-check", r.HealthCheck)
 
 	}
 
 	clientGroup := r.Engine.Group("/client")
 	{
-		clientGroup.GET("/health-check", r.SignUp)
+		clientGroup.Use(middleware.Auth([]string{"client"}))
+		clientGroup.GET("/health-check", r.HealthCheck)
 	}
 
 	userGroup := r.Engine.Group("/user")
 	{
-		userGroup.GET("/health-check", r.SignUp)
+		userGroup.Use(middleware.Auth([]string{"user"}))
+		userGroup.GET("/health-check", r.HealthCheck)
 	}
 
 	publicGroup := r.Engine.Group("/public")
 	{
 
-		// publicGroup.POST("/login", r.Login)
+		publicGroup.GET("/health-check", r.HealthCheck)
 		publicGroup.POST("/signup", r.SignUp)
 	}
 }
