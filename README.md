@@ -18,7 +18,7 @@ A scalable e-commerce platform that allows clients to create their own online st
 - **Database**: PostgreSQL is used for data storage, with schema defined in `db_migrator/schema.sql`.
 
 ## **Schema Overview**
-![Sample Image](db_migratorions/migration_files/schema.png)  
+![Sample Image](db_migratorions/schema.png)  
 *(This image represents the PostgreSQL schema structure used for the project.)*
 
 ## Role-Based Access Control (RBAC)
