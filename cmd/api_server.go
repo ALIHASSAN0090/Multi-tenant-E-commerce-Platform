@@ -8,6 +8,7 @@ import (
 	config "ecommerce-platform/configs"
 	AdminControllerImpl "ecommerce-platform/controllers/admin_controller/admin_controller_impl"
 	AuthServiceImpl "ecommerce-platform/controllers/auth_service/auth_service_impl"
+	"ecommerce-platform/db_migrator"
 	logger "ecommerce-platform/logger/log_service_impl"
 	"ecommerce-platform/router"
 	"fmt"
@@ -19,6 +20,8 @@ import (
 
 	"github.com/spf13/cobra"
 )
+
+const MigrationPath = "./db_migrator/migration_files"
 
 var ApiServerCommand = &cobra.Command{
 	Use:   "api",
@@ -41,6 +44,11 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 		logger.Fatal(err)
 	} else {
 		logger.Info("Connected to postgres!")
+	}
+
+	if err := db_migrator.MigrateDB(postgresDB, MigrationPath); err != nil {
+		logger.Fatalf("Migration error: %v", err)
+
 	}
 
 	ValidationService := Validation.NewValidationService()
