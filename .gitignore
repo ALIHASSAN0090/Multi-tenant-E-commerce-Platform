@@ -1,3 +1,5 @@
 .env
 schema.sql
 build/
+go.mod
+go.sum
