@@ -50,7 +50,6 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 	if err := migration.RunMigrations(postgresDB); err != nil {
 		log.Fatalf("Migrations Failed %v", err)
 	}
-	logger.Info("Migrations applied successfully!")
 
 	ValidationService := Validation.NewValidationService()
 
