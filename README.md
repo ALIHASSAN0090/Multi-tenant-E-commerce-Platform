@@ -69,6 +69,7 @@ RBAC is implemented using middleware that checks the user's role before allowing
 
 ## Future Plans
 
+- **EasyPaisa , Jazzcash**: Payment geteway integration.
 - **Docker**: Containerize the application for easier deployment.
 - **Kubernetes**: Orchestrate the application using Kubernetes for scalability.
 - **AWS Deployment**: Deploy the application on AWS for production use.

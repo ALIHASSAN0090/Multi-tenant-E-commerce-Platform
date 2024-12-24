@@ -17,19 +17,37 @@ func Auth(allowedRoles []string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Request.Header.Get(AdminTokenHeaderKey)
 		if len(token) == 0 {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, models.ErrorResponse{Error: "Token not found in header"})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, models.ErrorResponse{
+				Error: models.Error{
+					StatusCode: http.StatusUnauthorized,
+					Message:    "Token not found in header",
+					Detail:     "The request does not contain a valid authorization token.",
+				},
+			})
 			return
 		}
 
 		tokenStr := strings.TrimPrefix(token, "Bearer ")
 		claims, err := ValidateAccessToken(tokenStr)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, models.ErrorResponse{Error: err.Error()})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, models.ErrorResponse{
+				Error: models.Error{
+					StatusCode: http.StatusUnauthorized,
+					Message:    "Invalid token",
+					Detail:     err.Error(),
+				},
+			})
 			return
 		}
 
 		if !AllowedRoles(claims.Role, allowedRoles) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, models.ErrorResponse{Error: "Unauthorized access"})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, models.ErrorResponse{
+				Error: models.Error{
+					StatusCode: http.StatusUnauthorized,
+					Message:    "Unauthorized access",
+					Detail:     "The user's role does not have permission to access this resource.",
+				},
+			})
 			return
 		}
 

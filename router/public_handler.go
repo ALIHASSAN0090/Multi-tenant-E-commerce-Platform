@@ -31,17 +31,17 @@ func (r *Router) SignUp(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	} else if userExists {
-		c.JSON(http.StatusConflict, models.Response{
-			Data:    userExists,
-			Message: "User already exists",
-			Status:  http.StatusConflict,
+		c.JSON(http.StatusConflict, models.SuccessResponse{
+			Data:       userExists,
+			Message:    "User already exists",
+			StatusCode: http.StatusConflict,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, models.Response{
-		Message: "User signed up successfully",
-		Status:  http.StatusOK,
+	c.JSON(http.StatusOK, models.SuccessResponse{
+		Message:    "User signed up successfully",
+		StatusCode: http.StatusOK,
 	})
 }
 

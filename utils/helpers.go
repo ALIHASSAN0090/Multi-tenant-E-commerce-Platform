@@ -48,3 +48,12 @@ func HashPassword(pwd string) (string, error) {
 	}
 	return string(bytes), nil
 }
+
+func HandleError(err error) error {
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// func HandlSuccess ()
