@@ -32,5 +32,6 @@ func (r *Router) SetupRoutes() {
 
 		publicGroup.GET("/health-check", r.HealthCheck)
 		publicGroup.POST("/signup", r.SignUp)
+		publicGroup.POST("/login", r.Login)
 	}
 }

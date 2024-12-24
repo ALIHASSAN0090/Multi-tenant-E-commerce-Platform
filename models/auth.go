@@ -13,13 +13,18 @@ type SignUpReq struct {
 	Address     string `json:"address,omitempty" validate:"required"`
 }
 
+type LoginReq struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8"`
+}
+
 type Users struct {
 	ID          int64     `json:"id" db:"id"`
-	UserName    string    `json:"user_name" db:"user_name"`
+	UserName    string    `json:"name" db:"name"`
 	Email       string    `json:"email" db:"email"`
-	Password    string    `json:"password" db:"password"`
-	PhoneNumber string    `json:"phone_number" db:"phone_number"`
-	Role        string    `json:"role" db:"role"`
+	Password    string    `json:"hash_password" db:"hash_password"`
+	PhoneNumber string    `json:"phone_number,omitempty" db:"phone_number"`
+	Role        string    `json:"role" db:"name"`
 	Token       string    `json:"token,omitempty"`
 	Address     string    `json:"address,omitempty" db:"address"`
 	CreatedAt   time.Time `json:"created_at" db:"created_at"`

@@ -1,9 +1,11 @@
 package utils
 
 import (
+	"net/http"
 	"reflect"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/mitchellh/mapstructure"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -56,4 +58,18 @@ func HandleError(err error) error {
 	return nil
 }
 
-// func HandlSuccess ()
+func HandleJsonError(c *gin.Context, err error) {
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+}
+
+func VerifyPassword(userPassword string, providedPassword string) (bool, string) {
+	err := bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(providedPassword))
+	if err != nil {
+
+		return false, "Password does not match"
+	}
+
+	return true, "Password matched"
+}

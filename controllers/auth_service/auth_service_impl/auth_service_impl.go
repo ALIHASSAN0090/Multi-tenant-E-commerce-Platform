@@ -4,8 +4,10 @@ import (
 	dao "ecommerce-platform/Dao"
 	authservice "ecommerce-platform/controllers/auth_service"
 	logger "ecommerce-platform/logger"
+	"ecommerce-platform/middleware"
 	"ecommerce-platform/models"
 	"ecommerce-platform/utils"
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -39,7 +41,7 @@ func (a *AuthServiceImpl) SignUp(ctx *gin.Context, req *models.Users) (bool, err
 
 	req.Password = hashed
 
-	exists, err := a.authDao.CheckUserExists(req)
+	exists, err := a.authDao.CheckUserExistsSignup(req)
 	if err != nil {
 		a.logger.Error("Error checking if user exists: ", err)
 		return false, err
@@ -65,5 +67,39 @@ func (a *AuthServiceImpl) SignUp(ctx *gin.Context, req *models.Users) (bool, err
 }
 
 func (a *AuthServiceImpl) CheckUserExists(req *models.Users) (bool, error) {
-	return a.authDao.CheckUserExists(req)
+	return a.authDao.CheckUserExistsSignup(req)
+}
+
+func (a *AuthServiceImpl) ProcessLogin(req *models.LoginReq) (string, error) {
+	exists, err := a.authDao.CheckUserExistsLogin(req)
+	if err != nil {
+		a.logger.Error("Error checking if user exists: ", err)
+		return "", err
+	}
+
+	if !exists {
+		a.logger.Info("User does not exist")
+		return "", fmt.Errorf("user does not exist")
+	}
+
+	user, err := a.authDao.GetUser(req)
+	if err != nil {
+		a.logger.Error("Error retrieving user: ", err)
+		return "", err
+	}
+
+	fmt.Print("password not matched ")
+
+	passwordMatch, msg := utils.VerifyPassword(user.Password, req.Password)
+	if !passwordMatch {
+		a.logger.Info("Password verification failed: ", msg)
+		return "", fmt.Errorf("invalid credentials")
+	}
+
+	fmt.Print("password matched ")
+
+	token, err := middleware.GenerateAccessToken(&user)
+	utils.HandleError(err)
+
+	return token, nil
 }

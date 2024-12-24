@@ -15,10 +15,22 @@ type AuthDaoImp struct {
 	db *sql.DB
 }
 
-func (a *AuthDaoImp) CheckUserExists(req *models.Users) (bool, error) {
+func (a *AuthDaoImp) CheckUserExistsSignup(req *models.Users) (bool, error) {
 	var exists bool
 
 	checkQuery := `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1 AND role = 'user' )`
+	err := a.db.QueryRow(checkQuery, req.Email).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}
+
+func (a *AuthDaoImp) CheckUserExistsLogin(req *models.LoginReq) (bool, error) {
+	var exists bool
+
+	checkQuery := `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1 )`
 	err := a.db.QueryRow(checkQuery, req.Email).Scan(&exists)
 	if err != nil {
 		return false, err
@@ -43,4 +55,22 @@ func (a *AuthDaoImp) SignUp(req *models.Users) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func (a *AuthDaoImp) GetUser(req *models.LoginReq) (models.Users, error) {
+	var user models.Users
+
+	query := `
+	SELECT u.name, u.email, u.hash_password, r.name as role, u.created_at, u.updated_at 
+    FROM users u
+    Join roles r
+    on r.id = u.role_id
+    WHERE email = $1
+	`
+	err := a.db.QueryRow(query, req.Email).Scan(&user.UserName, &user.Email, &user.Password, &user.Role, &user.CreatedAt, &user.UpdatedAt)
+	if err != nil {
+		return models.Users{}, err
+	}
+
+	return user, nil
 }

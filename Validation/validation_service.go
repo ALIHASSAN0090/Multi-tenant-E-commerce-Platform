@@ -4,10 +4,12 @@ import (
 	"ecommerce-platform/Validation/validation_service_impl"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator"
 )
 
 type ValidationService interface {
 	ValidateReq(c *gin.Context, request interface{}) []string
+	ValidateEmailPassword(fl validator.FieldLevel) bool
 }
 
 func NewValidationService() ValidationService {
