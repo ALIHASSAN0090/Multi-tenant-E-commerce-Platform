@@ -16,6 +16,7 @@ func (r *Router) SignUp(c *gin.Context) {
 		utils.HandleJsonError(c, err)
 		return
 	}
+	req.Role = "user"
 
 	if errMess := r.Val.ValidateReq(c, &req); len(errMess) > 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": errMess})
@@ -28,20 +29,13 @@ func (r *Router) SignUp(c *gin.Context) {
 		return
 	}
 
-	if userExists, err := r.AuthService.SignUp(c, signUp); err != nil {
-		utils.HandleJsonError(c, err)
-		return
-	} else if userExists {
-		c.JSON(http.StatusConflict, models.SuccessResponse{
-			Data:       userExists,
-			Message:    "User already exists",
-			StatusCode: http.StatusConflict,
-		})
-		return
-	}
+	user, message, err := r.AuthService.SignUp(c, signUp)
+	utils.HandleError(err)
 
 	c.JSON(http.StatusOK, models.SuccessResponse{
-		Message:    "User signed up successfully",
+		Data:       user,
+		Message:    message,
+		SubMessage: message,
 		StatusCode: http.StatusOK,
 	})
 }
@@ -70,13 +64,13 @@ func (r *Router) Login(c *gin.Context) {
 	utils.HandleJsonError(c, err)
 
 	if err == nil {
-		c.JSON(http.StatusOK, models.SuccessResponse{
-			Data:       token,
+		c.JSON(http.StatusOK, models.TokenResponse{
+			Token:      token,
 			Message:    "Login successful",
 			StatusCode: http.StatusOK,
 		})
 	} else {
-		c.JSON(http.StatusUnauthorized, models.SuccessResponse{
+		c.JSON(http.StatusUnauthorized, models.TokenResponse{
 			Message:    "Invalid credentials",
 			StatusCode: http.StatusUnauthorized,
 		})

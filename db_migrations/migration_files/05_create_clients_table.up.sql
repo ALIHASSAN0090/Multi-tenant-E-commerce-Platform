@@ -4,6 +4,6 @@ CREATE TABLE IF NOT EXISTS "clients"(
     "business_name" VARCHAR(255) NOT NULL,
     "contact_number" VARCHAR(20), 
     "created_at" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    "updated_at" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    "updated_at" TIMESTAMP WITHOUT TIME ZONE ,
     "deleted_at" TIMESTAMP WITHOUT TIME ZONE
 );

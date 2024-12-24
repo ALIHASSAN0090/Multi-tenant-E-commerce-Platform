@@ -6,6 +6,6 @@ CREATE TABLE IF NOT EXISTS "order_items"(
     "price_per_item" DECIMAL(10, 2) NOT NULL,  
     "total_price" DECIMAL(10, 2) NOT NULL, 
     "created_at" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    "updated_at" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    "updated_at" TIMESTAMP WITHOUT TIME ZONE ,
     "deleted_at" TIMESTAMP WITHOUT TIME ZONE
 );

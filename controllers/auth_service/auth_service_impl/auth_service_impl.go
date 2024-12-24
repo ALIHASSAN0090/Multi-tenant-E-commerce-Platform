@@ -34,50 +34,53 @@ type NewAuthServiceImpl struct {
 	DB      *sql.DB
 }
 
-func (a *AuthServiceImpl) SignUp(ctx *gin.Context, req *models.Users) (bool, error) {
+func (a *AuthServiceImpl) SignUp(ctx *gin.Context, req *models.Users) (*models.Users, string, error) {
 	a.logger.Info("Initiating SignUp process")
 
+	exists, err := a.authDao.CheckUserExists(req.Email)
+	if err != nil {
+
+		return &models.Users{}, "error in checking if user exist", err
+	}
+
+	if exists {
+		return &models.Users{}, "User already exists", nil
+	}
 	hashed, err := utils.HashPassword(req.Password)
 	if err != nil {
-		a.logger.Error("Error hashing password: ", err)
-		return false, err
+
+		return &models.Users{}, "Error hashing password", err
+	}
+
+	passwordMatch, msg := utils.VerifyPassword(hashed, req.Password)
+	if !passwordMatch {
+		a.logger.Info("Password hashing failed: ", msg)
+		return &models.Users{}, "password is invalid", fmt.Errorf("password is invalid")
 	}
 
 	req.Password = hashed
 
-	exists, err := a.authDao.CheckUserExistsSignup(req)
-	if err != nil {
-		a.logger.Error("Error checking if user exists: ", err)
-		return false, err
-	}
-
-	if exists {
-		a.logger.Info("User already exists")
-		return true, nil
-	}
-
 	if req.CreatedAt.IsZero() {
 		req.CreatedAt = time.Now().UTC()
 	}
-	req.UpdatedAt = time.Now().UTC()
 
-	userExists, err := a.authDao.SignUp(req)
+	userCreated, err := a.authDao.SignUp(req)
 	if err != nil {
 		a.logger.Error("Error during SignUp: ", err)
-		return false, err
+		return &models.Users{}, "Error during SignUp", err
 	}
 
-	return userExists, nil
+	return userCreated, "Signed Up successfully", nil
 }
 
 func (a *AuthServiceImpl) CheckUserExists(req *models.Users) (bool, error) {
 
-	return a.authDao.CheckUserExistsSignup(req)
+	return a.authDao.CheckUserExists(req.Email)
 }
 
 func (a *AuthServiceImpl) ProcessLogin(ctx *gin.Context, req *models.LoginReq) (string, error) {
 
-	exists, err := a.authDao.CheckUserExistsLogin(req)
+	exists, err := a.authDao.CheckUserExists(req.Email)
 	if err != nil {
 		a.logger.Error("Error checking if user exists: ", err)
 		return "", err

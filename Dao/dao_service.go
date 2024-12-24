@@ -15,24 +15,11 @@ type AuthDaoImp struct {
 	db *sql.DB
 }
 
-func (a *AuthDaoImp) CheckUserExistsSignup(req *models.Users) (bool, error) {
-	var exists bool
-
-	checkQuery := `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1 AND role = 'user' )`
-	err := a.db.QueryRow(checkQuery, req.Email).Scan(&exists)
-	if err != nil {
-
-		return false, err
-	}
-
-	return exists, nil
-}
-
-func (a *AuthDaoImp) CheckUserExistsLogin(req *models.LoginReq) (bool, error) {
+func (a *AuthDaoImp) CheckUserExists(req string) (bool, error) {
 
 	var exists bool
 	checkQuery := `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)`
-	err := a.db.QueryRow(checkQuery, req.Email).Scan(&exists)
+	err := a.db.QueryRow(checkQuery, req).Scan(&exists)
 
 	if err != nil {
 		return false, err
@@ -41,35 +28,41 @@ func (a *AuthDaoImp) CheckUserExistsLogin(req *models.LoginReq) (bool, error) {
 	return exists, nil
 }
 
-func (a *AuthDaoImp) SignUp(req *models.Users) (bool, error) {
+func (a *AuthDaoImp) SignUp(req *models.Users) (*models.Users, error) {
 
-	query := `INSERT INTO users(user_name, email, password, phone_number, role, address, created_at, updated_at) 
-	VALUES($1, $2, $3, $4, $5, $6, $7, $8)`
-	stmt, err := a.db.Prepare(query)
+	query1 := `INSERT INTO users(name, email, hash_password, role_id, created_at) 
+	VALUES($1, $2, $3, $4, NOW()) RETURNING id`
+	stmt, err := a.db.Prepare(query1)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(req.UserName, req.Email, req.Password, req.PhoneNumber, req.Role, req.Address, req.CreatedAt, req.UpdatedAt)
+	var roleID int
+	query2 := `SELECT id FROM roles WHERE name = 'user'`
+	err = a.db.QueryRow(query2).Scan(&roleID)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
-	return false, nil
+	if err := stmt.QueryRow(req.UserName, req.Email, req.Password, roleID).Scan(&req.ID); err != nil {
+		return nil, err
+	}
+
+	return req, nil
 }
 
 func (a *AuthDaoImp) GetUser(req *models.LoginReq) (models.Users, error) {
 	var user models.Users
 
 	query := `
-	SELECT u.name, u.email, u.hash_password, r.name as role, u.created_at, u.updated_at 
+	SELECT u.id, u.name, u.email, u.hash_password, r.name as role, u.created_at
     FROM users u
     Join roles r
     on r.id = u.role_id
     WHERE email = $1
 	`
-	err := a.db.QueryRow(query, req.Email).Scan(&user.UserName, &user.Email, &user.Password, &user.Role, &user.CreatedAt, &user.UpdatedAt)
+	err := a.db.QueryRow(query, req.Email).Scan(&user.ID, &user.UserName, &user.Email, &user.Password, &user.Role, &user.CreatedAt)
 	if err != nil {
 		return models.Users{}, err
 	}

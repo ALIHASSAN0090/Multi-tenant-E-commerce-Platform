@@ -23,3 +23,9 @@ type Error struct {
 	Message    string `json:"message"`
 	Detail     string `json:"detail"`
 }
+
+type TokenResponse struct {
+	Token      string `json:"token"`
+	StatusCode int    `json:"status_code"`
+	Message    string `json:"message"`
+}

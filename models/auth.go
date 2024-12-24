@@ -9,7 +9,7 @@ type SignUpReq struct {
 	Email       string `json:"email" validate:"required,email"`
 	Password    string `json:"password" validate:"required,min=8"`
 	PhoneNumber string `json:"phone_number" validate:"required,e164"`
-	Role        string `json:"role" validate:"required"`
+	Role        string `json:"role,omitempty"`
 	Address     string `json:"address,omitempty" validate:"required"`
 }
 
@@ -24,7 +24,7 @@ type Users struct {
 	Email       string    `json:"email" db:"email"`
 	Password    string    `json:"hash_password" db:"hash_password"`
 	PhoneNumber string    `json:"phone_number,omitempty" db:"phone_number"`
-	Role        string    `json:"role" db:"name"`
+	Role        string    `json:"role,omitempty" db:"role"`
 	Token       string    `json:"token,omitempty"`
 	Address     string    `json:"address,omitempty" db:"address"`
 	CreatedAt   time.Time `json:"created_at" db:"created_at"`
