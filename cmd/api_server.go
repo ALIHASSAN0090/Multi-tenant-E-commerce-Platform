@@ -45,6 +45,10 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 	} else {
 		logger.Info("Connected to postgres!")
 	}
+	defer func() {
+		logger.Info("Closing database connection")
+		postgresDB.Close()
+	}()
 
 	migration := db_migrations.NewMigration()
 	if err := migration.RunMigrations(postgresDB); err != nil {
@@ -60,6 +64,7 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 	AuthService, AdminController := AuthServiceImpl.NewAuthService(AuthServiceImpl.NewAuthServiceImpl{
 		Logger:  logger,
 		AuthDao: AuthDao,
+		DB:      postgresDB,
 	}), AdminControllerImpl.NewAdminController(AdminControllerImpl.NewAdminControllerImpl{
 		Logger:   logger,
 		AuthDao:  AuthDao,

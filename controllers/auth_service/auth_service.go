@@ -9,5 +9,5 @@ import (
 type AuthService interface {
 	SignUp(ctx *gin.Context, req *models.Users) (bool, error)
 	CheckUserExists(req *models.Users) (bool, error)
-	ProcessLogin(req *models.LoginReq) (string, error)
+	ProcessLogin(ctx *gin.Context, req *models.LoginReq) (string, error)
 }

@@ -66,7 +66,7 @@ func (r *Router) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := r.AuthService.ProcessLogin(&creds)
+	token, err := r.AuthService.ProcessLogin(c, &creds)
 	utils.HandleJsonError(c, err)
 
 	if err == nil {

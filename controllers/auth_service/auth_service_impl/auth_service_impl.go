@@ -1,6 +1,7 @@
 package auth_service_impl
 
 import (
+	"database/sql"
 	dao "ecommerce-platform/Dao"
 	authservice "ecommerce-platform/controllers/auth_service"
 	logger "ecommerce-platform/logger"
@@ -16,18 +17,21 @@ import (
 type AuthServiceImpl struct {
 	logger  logger.IAppLogger
 	authDao dao.AuthDao
+	db      *sql.DB
 }
 
 func NewAuthService(input NewAuthServiceImpl) authservice.AuthService {
 	return &AuthServiceImpl{
 		logger:  input.Logger,
 		authDao: input.AuthDao,
+		db:      input.DB,
 	}
 }
 
 type NewAuthServiceImpl struct {
 	Logger  logger.IAppLogger
 	AuthDao dao.AuthDao
+	DB      *sql.DB
 }
 
 func (a *AuthServiceImpl) SignUp(ctx *gin.Context, req *models.Users) (bool, error) {
@@ -67,10 +71,12 @@ func (a *AuthServiceImpl) SignUp(ctx *gin.Context, req *models.Users) (bool, err
 }
 
 func (a *AuthServiceImpl) CheckUserExists(req *models.Users) (bool, error) {
+
 	return a.authDao.CheckUserExistsSignup(req)
 }
 
-func (a *AuthServiceImpl) ProcessLogin(req *models.LoginReq) (string, error) {
+func (a *AuthServiceImpl) ProcessLogin(ctx *gin.Context, req *models.LoginReq) (string, error) {
+
 	exists, err := a.authDao.CheckUserExistsLogin(req)
 	if err != nil {
 		a.logger.Error("Error checking if user exists: ", err)
@@ -88,18 +94,13 @@ func (a *AuthServiceImpl) ProcessLogin(req *models.LoginReq) (string, error) {
 		return "", err
 	}
 
-	fmt.Print("password not matched ")
-
 	passwordMatch, msg := utils.VerifyPassword(user.Password, req.Password)
 	if !passwordMatch {
 		a.logger.Info("Password verification failed: ", msg)
 		return "", fmt.Errorf("invalid credentials")
 	}
 
-	fmt.Print("password matched ")
-
 	token, err := middleware.GenerateAccessToken(&user)
 	utils.HandleError(err)
-
 	return token, nil
 }

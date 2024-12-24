@@ -21,6 +21,7 @@ func (a *AuthDaoImp) CheckUserExistsSignup(req *models.Users) (bool, error) {
 	checkQuery := `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1 AND role = 'user' )`
 	err := a.db.QueryRow(checkQuery, req.Email).Scan(&exists)
 	if err != nil {
+
 		return false, err
 	}
 
@@ -28,10 +29,11 @@ func (a *AuthDaoImp) CheckUserExistsSignup(req *models.Users) (bool, error) {
 }
 
 func (a *AuthDaoImp) CheckUserExistsLogin(req *models.LoginReq) (bool, error) {
-	var exists bool
 
-	checkQuery := `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1 )`
+	var exists bool
+	checkQuery := `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)`
 	err := a.db.QueryRow(checkQuery, req.Email).Scan(&exists)
+
 	if err != nil {
 		return false, err
 	}

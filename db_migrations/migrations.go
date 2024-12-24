@@ -21,8 +21,6 @@ func NewMigration() Migration {
 
 func (m *Migration) RunMigrations(db *sql.DB) error {
 
-	defer db.Close()
-
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
 		return fmt.Errorf("could not create database driver: %w", err)
