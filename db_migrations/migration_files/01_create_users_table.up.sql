@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS "users"(
     "id" SERIAL PRIMARY KEY,
+    "profile_img" VARCHAR(255),
     "role_id" BIGINT NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "email" VARCHAR(255) NOT NULL UNIQUE,

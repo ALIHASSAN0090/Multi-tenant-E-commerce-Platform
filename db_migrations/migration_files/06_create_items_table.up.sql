@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS "items"(
     "id" SERIAL PRIMARY KEY,
+    "item_img" VARCHAR(255),
     "store_id" BIGINT NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "description" VARCHAR(255) NOT NULL,

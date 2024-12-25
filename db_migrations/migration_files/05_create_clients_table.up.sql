@@ -1,5 +1,8 @@
-CREATE TABLE IF NOT EXISTS "clients"(
+CREATE TABLE IF NOT EXISTS "sellers"(
     "id" SERIAL PRIMARY KEY,
+    "seller_img" VARCHAR(255),
+    "cnic_number" VARCHAR(15)NOT NULL,
+    "cnic_image" VARCHAR(255)NOT NULL,
     "user_id" BIGINT NOT NULL,
     "business_name" VARCHAR(255) NOT NULL,
     "contact_number" VARCHAR(20), 
