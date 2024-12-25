@@ -20,18 +20,18 @@ type AuthServiceImpl struct {
 	db      *sql.DB
 }
 
+type NewAuthServiceImpl struct {
+	Logger  logger.IAppLogger
+	AuthDao dao.AuthDao
+	DB      *sql.DB
+}
+
 func NewAuthService(input NewAuthServiceImpl) authservice.AuthService {
 	return &AuthServiceImpl{
 		logger:  input.Logger,
 		authDao: input.AuthDao,
 		db:      input.DB,
 	}
-}
-
-type NewAuthServiceImpl struct {
-	Logger  logger.IAppLogger
-	AuthDao dao.AuthDao
-	DB      *sql.DB
 }
 
 func (a *AuthServiceImpl) SignUp(ctx *gin.Context, req *models.Users) (*models.Users, string, error) {

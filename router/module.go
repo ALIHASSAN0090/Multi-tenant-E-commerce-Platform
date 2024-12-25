@@ -23,7 +23,9 @@ func NewRouter(
 	valService Validation.ValidationService,
 	AdminController admin_controller.AdminControllers,
 ) *Router {
+
 	engine := gin.Default()
+
 	router := &Router{
 		Engine:      engine,
 		AuthService: authService,

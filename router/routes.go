@@ -5,8 +5,8 @@ import (
 )
 
 func (r *Router) SetupRoutes() {
-
-	r.Engine.Use(middleware.EnableCors())
+	rateLimiter := middleware.NewRateLimiter(1, 5)
+	r.Engine.Use(middleware.EnableCors(), rateLimiter.Limit())
 
 	adminGroup := r.Engine.Group("/admin")
 	{
