@@ -31,7 +31,7 @@ The application uses RBAC to manage access to different routes based on user rol
 
 ### Implementing RBAC
 
-RBAC is implemented using middleware that checks the user's role before allowing access to specific routes. This ensures that only authorized users can perform certain actions.
+RBAC is implemented using middleware that checks the user's role before allowing access to specific routes.It implements rate limiter which limits the per user request rate against ddos attacks.This ensures that only authorized users can perform certain actions and server secure against massive requests.
 
 ## Getting Started
 
