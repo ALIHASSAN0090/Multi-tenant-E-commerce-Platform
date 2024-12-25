@@ -5,7 +5,7 @@ ALTER TABLE "payments" DROP CONSTRAINT IF EXISTS "payments_order_id_foreign";
 ALTER TABLE "orders" DROP CONSTRAINT IF EXISTS "orders_updated_by_foreign";
 ALTER TABLE "order_items" DROP CONSTRAINT IF EXISTS "order_items_item_id_foreign";
 ALTER TABLE "payments" DROP CONSTRAINT IF EXISTS "payments_updated_by_foreign";
-ALTER TABLE "clients" DROP CONSTRAINT IF EXISTS "clients_user_id_foreign";
+ALTER TABLE "seller" DROP CONSTRAINT IF EXISTS "seller_user_id_foreign";
 ALTER TABLE "orders" DROP CONSTRAINT IF EXISTS "orders_user_id_foreign";
 ALTER TABLE "reviews" DROP CONSTRAINT IF EXISTS "reviews_order_id_foreign";
 ALTER TABLE "reviews" DROP CONSTRAINT IF EXISTS "reviews_user_id_foreign";

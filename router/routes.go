@@ -17,13 +17,13 @@ func (r *Router) SetupRoutes() {
 
 	clientGroup := r.Engine.Group("/client")
 	{
-		clientGroup.Use(middleware.Auth([]string{"client"}))
+		clientGroup.Use(middleware.Auth([]string{"seller", "admin"}))
 		clientGroup.GET("/health-check", r.HealthCheck)
 	}
 
 	userGroup := r.Engine.Group("/user")
 	{
-		userGroup.Use(middleware.Auth([]string{"user"}))
+		userGroup.Use(middleware.Auth([]string{"user", "admin"}))
 		userGroup.GET("/health-check", r.HealthCheck)
 	}
 

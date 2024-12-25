@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS "sellers"(
+CREATE TABLE IF NOT EXISTS "seller"(
     "id" SERIAL PRIMARY KEY,
     "seller_img" VARCHAR(255),
     "cnic_number" VARCHAR(15)NOT NULL,

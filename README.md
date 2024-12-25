@@ -1,9 +1,9 @@
 # Multi-tenant-E-commerce-Platform 
-A scalable e-commerce platform that allows clients to create their own online stores. Users can browse different stores, search for items, and make purchases. The application is built using Go, with a focus on clean architecture and efficient command-line management using Cobra.
+A scalable e-commerce platform that allows seller to create their own online stores. Users can browse different stores, search for items, and make purchases. The application is built using Go, with a focus on clean architecture and efficient command-line management using Cobra.
 
 ## Features
 
-- **Multi-Store Support**: Clients can create and manage their own stores.
+- **Multi-Store Support**: seller can create and manage their own stores.
 - **User Management**: Users can sign up, browse stores, and purchase items.
 - **Admin Panel**: Admins can manage users, stores, and orders.
 - **Role-Based Access Control (RBAC)**: Secure routes based on user roles (Admin, Client, User).
