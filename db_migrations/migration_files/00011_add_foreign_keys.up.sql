@@ -12,6 +12,6 @@ ALTER TABLE "reviews" ADD CONSTRAINT "reviews_order_id_foreign" FOREIGN KEY("ord
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_user_id_foreign" FOREIGN KEY("user_id") REFERENCES "users"("id");
 ALTER TABLE "payments" ADD CONSTRAINT "payments_created_by_foreign" FOREIGN KEY("created_by") REFERENCES "users"("id");
 ALTER TABLE "items" ADD CONSTRAINT "items_store_id_foreign" FOREIGN KEY("store_id") REFERENCES "stores"("id");
-ALTER TABLE "stores" ADD CONSTRAINT "stores_client_id_foreign" FOREIGN KEY("client_id") REFERENCES "seller"("id");
+ALTER TABLE "stores" ADD CONSTRAINT "stores_seller_id_foreign" FOREIGN KEY("seller_id") REFERENCES "seller"("id");
 ALTER TABLE "order_history" ADD CONSTRAINT "order_history_order_id_foreign" FOREIGN KEY("order_id") REFERENCES "orders"("id");
 

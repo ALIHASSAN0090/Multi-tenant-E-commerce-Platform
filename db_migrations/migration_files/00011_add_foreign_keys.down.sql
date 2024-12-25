@@ -11,6 +11,6 @@ ALTER TABLE "reviews" DROP CONSTRAINT IF EXISTS "reviews_order_id_foreign";
 ALTER TABLE "reviews" DROP CONSTRAINT IF EXISTS "reviews_user_id_foreign";
 ALTER TABLE "payments" DROP CONSTRAINT IF EXISTS "payments_created_by_foreign";
 ALTER TABLE "items" DROP CONSTRAINT IF EXISTS "items_store_id_foreign";
-ALTER TABLE "stores" DROP CONSTRAINT IF EXISTS "stores_client_id_foreign";
+ALTER TABLE "stores" DROP CONSTRAINT IF EXISTS "stores_seller_id_foreign";
 ALTER TABLE "order_history" DROP CONSTRAINT IF EXISTS "order_history_order_id_foreign";
 
