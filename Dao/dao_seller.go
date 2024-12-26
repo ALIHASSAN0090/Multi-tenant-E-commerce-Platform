@@ -15,15 +15,18 @@ func NewSellerDao(db *sql.DB) *SellerDaoImpl {
 	}
 }
 
-func (s *SellerDaoImpl) GetStoreItemsDB(seller_id int64) ([]models.Item, error) {
-
-	storeId, err := s.GetStoreIDByUserID(seller_id)
+func (s *SellerDaoImpl) GetStoreItemsDB(sellerID int64) ([]models.Item, error) {
+	storeID, err := s.GetStoreIDByUserID(sellerID)
 	if err != nil {
 		return nil, err
 	}
 
-	query := "SELECT id, name, price, stock_quantity, description, discount FROM items WHERE store_id = $1"
-	rows, err := s.db.Query(query, storeId)
+	query := `
+	SELECT id, name, price, stock_quantity, description, discount 
+	FROM items 
+	WHERE store_id = $1
+	`
+	rows, err := s.db.Query(query, storeID)
 	if err != nil {
 		return nil, err
 	}
@@ -47,9 +50,9 @@ func (s *SellerDaoImpl) GetStoreItemsDB(seller_id int64) ([]models.Item, error) 
 
 func (s *SellerDaoImpl) GetStoreIDByUserID(userID int64) (int64, error) {
 	query := `
-	SELECT st.id AS store_id 
-	FROM seller AS s 
-	JOIN stores st ON st.seller_id = s.id 
+	SELECT st.id AS store_id
+	FROM seller AS s
+	JOIN stores st ON st.seller_id = s.id
 	WHERE s.user_id = $1
 	`
 

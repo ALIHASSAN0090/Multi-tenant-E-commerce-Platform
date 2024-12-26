@@ -20,5 +20,4 @@ type UserDao interface {
 
 type SellerDao interface {
 	GetStoreItemsDB(seller_id int64) ([]models.Item, error)
-	GetStoreIDBySellerID(userID int64) (int64, error)
 }

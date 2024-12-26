@@ -9,8 +9,8 @@ import (
 
 func (r *Router) GetStoreItems(c *gin.Context) {
 
-	sellerID, err := GetContextID(c)
-	if !err {
+	sellerID, valid := GetContextID(c)
+	if !valid {
 		c.JSON(http.StatusBadRequest, models.ErrorResponse{
 			Error: models.Error{
 				StatusCode: http.StatusBadRequest,
@@ -20,13 +20,14 @@ func (r *Router) GetStoreItems(c *gin.Context) {
 		})
 		return
 	}
-	storeData, err1 := r.SellerController.GetStoreItems(sellerID)
-	if err1 != nil {
+
+	storeData, err := r.SellerController.GetStoreItems(sellerID)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
 			Error: models.Error{
 				StatusCode: http.StatusInternalServerError,
 				Message:    "Error in getting Store Data",
-				Detail:     err1.Error(),
+				Detail:     err.Error(),
 			},
 		})
 		return

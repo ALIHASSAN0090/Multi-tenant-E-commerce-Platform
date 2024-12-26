@@ -3,6 +3,7 @@ package router
 import (
 	"ecommerce-platform/models"
 	"ecommerce-platform/utils"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -80,16 +81,16 @@ func (r *Router) Login(c *gin.Context) {
 
 func GetContextID(c *gin.Context) (int64, bool) {
 	IDInterface, exists := c.Get("Id")
+	fmt.Printf("found id :%v, type: %T\n", IDInterface, IDInterface)
 	if !exists {
-		c.JSON(400, gin.H{"error": "Seller ID not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID not found"})
 		return 0, false
 	}
+	if IDUint, ok := IDInterface.(uint); ok {
+		ID := int64(IDUint)
 
-	ID, ok := IDInterface.(int64)
-	if !ok {
-		c.JSON(400, gin.H{"error": "Seller ID is not valid"})
-		return 0, false
+		return ID, true
 	}
-
-	return ID, true
+	c.JSON(http.StatusBadRequest, gin.H{"error": "ID is not valid"})
+	return 0, false
 }
