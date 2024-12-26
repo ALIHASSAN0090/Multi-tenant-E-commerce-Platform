@@ -15,7 +15,7 @@ func (r *Router) SetupRoutes() {
 
 	}
 
-	clientGroup := r.Engine.Group("/client")
+	clientGroup := r.Engine.Group("/seller")
 	{
 		clientGroup.Use(middleware.Auth([]string{"seller", "admin"}))
 		clientGroup.GET("/health-check", r.HealthCheck)

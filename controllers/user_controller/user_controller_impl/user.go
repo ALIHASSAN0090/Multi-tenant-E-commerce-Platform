@@ -40,5 +40,15 @@ func (uc *UsercontrollerImpl) CreateSellerStore(c *gin.Context, seller models.Se
 		return models.Seller{}, models.Store{}, err
 	}
 
+	changed, err := uc.UserDao.ChangeRoleToSeller(sellerData.UserID)
+	if err != nil {
+		utils.HandleError(err)
+		return models.Seller{}, models.Store{}, err
+	}
+
+	if !changed {
+		return models.Seller{}, models.Store{}, err
+	}
+
 	return sellerData, storeData, nil
 }

@@ -81,3 +81,22 @@ func (dao *UserDaoImpl) checkExistingSeller(userID int64) (bool, error) {
 	}
 	return false, nil
 }
+
+func (dao *UserDaoImpl) ChangeRoleToSeller(id int64) (bool, error) {
+
+	var roleID int
+	query2 := `SELECT id FROM roles WHERE name = 'seller'`
+	err := dao.db.QueryRow(query2).Scan(&roleID)
+	if err != nil {
+		return false, err
+	}
+
+	query := `UPDATE users SET role_id = $1 WHERE id = $2`
+
+	_, err = dao.db.Exec(query, roleID, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
