@@ -8,6 +8,7 @@ import (
 	config "ecommerce-platform/configs"
 	AdminControllerImpl "ecommerce-platform/controllers/admin_controller/admin_controller_impl"
 	AuthServiceImpl "ecommerce-platform/controllers/auth_service/auth_service_impl"
+	SellerControllerImpl "ecommerce-platform/controllers/seller_controller/seller_controller_impl"
 	UserControllerImpl "ecommerce-platform/controllers/user_controller/user_controller_impl"
 	"ecommerce-platform/db_migrations"
 	"log"
@@ -58,7 +59,7 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 
 	ValidationService := Validation.NewValidationService()
 
-	AuthDao, AdminDao, UserDao := Dao.NewAuthDao(postgresDB), Dao.NewAdminDao(postgresDB), Dao.NewUserDao(postgresDB)
+	AuthDao, AdminDao, UserDao, SellerDao := Dao.NewAuthDao(postgresDB), Dao.NewAdminDao(postgresDB), Dao.NewUserDao(postgresDB), Dao.SellerDao(postgresDB)
 
 	logger.Info("Starting Api Server")
 
@@ -77,7 +78,12 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 		DB:      postgresDB,
 	})
 
-	router := router.NewRouter(logger, AuthService, ValidationService, AdminController, Usercontroller)
+	SellerController := SellerControllerImpl.NewSellerImpl(SellerControllerImpl.SellerController{
+		SellerDao: SellerDao,
+		DB:        postgresDB,
+	})
+
+	router := router.NewRouter(logger, AuthService, ValidationService, AdminController, Usercontroller, SellerController)
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGABRT, os.Interrupt)

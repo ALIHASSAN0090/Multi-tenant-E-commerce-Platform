@@ -17,3 +17,6 @@ type UserDao interface {
 	checkExistingSeller(userID int64) (bool, error)
 	ChangeRoleToSeller(id int64) (bool, error)
 }
+
+type SellerDao interface {
+}

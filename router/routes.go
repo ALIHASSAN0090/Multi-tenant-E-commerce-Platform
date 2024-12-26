@@ -15,17 +15,19 @@ func (r *Router) SetupRoutes() {
 
 	}
 
-	clientGroup := r.Engine.Group("/seller")
+	sellerGroup := r.Engine.Group("/seller")
 	{
-		clientGroup.Use(middleware.Auth([]string{"seller", "admin"}))
-		clientGroup.GET("/health-check", r.HealthCheck)
+		sellerGroup.Use(middleware.Auth([]string{"seller", "admin"}))
+		sellerGroup.GET("/health-check", r.HealthCheck)
+		sellerGroup.GET("/store", r.GetStore)
+
 	}
 
 	userGroup := r.Engine.Group("/user")
 	{
 		userGroup.Use(middleware.Auth([]string{"user", "admin", "seller"}))
 		userGroup.GET("/health-check", r.HealthCheck)
-		userGroup.POST("/create/seller", r.CreateSeller)
+		userGroup.POST("/create/seller/store", r.CreateSeller)
 	}
 
 	publicGroup := r.Engine.Group("/public")
