@@ -105,9 +105,6 @@ type Item struct {
 	Discount      int64      `json:"discount" db:"discount"`
 }
 
-type GetStoreData struct {
-}
-
 // Order model
 type Order struct {
 	ID         int64      `json:"id" db:"id"`

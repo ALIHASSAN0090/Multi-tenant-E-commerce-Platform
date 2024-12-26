@@ -7,31 +7,35 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (r *Router) GetStore(c *gin.Context) {
+func (r *Router) GetStoreItems(c *gin.Context) {
 
-	seller_id, exists := c.Get("Id")
-	if !exists {
-		c.JSON(400, gin.H{"error": "Seller ID not found"})
+	sellerID, err := GetContextID(c)
+	if !err {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusBadRequest,
+				Message:    "Invalid Seller ID",
+				Detail:     "Seller ID not found or invalid",
+			},
+		})
 		return
 	}
-
-	storeData, err := r.SellerController.GetStore(seller_id)
-	if err != nil {
+	storeData, err1 := r.SellerController.GetStoreItems(sellerID)
+	if err1 != nil {
 		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
 			Error: models.Error{
 				StatusCode: http.StatusInternalServerError,
 				Message:    "Error in getting Store Data",
-				Detail:     err.Error(),
+				Detail:     err1.Error(),
 			},
 		})
-	} else {
-
-		c.JSON(http.StatusOK, models.SuccessResponse{
-			Data:       storeData,
-			Message:    "Store Data fetched Successfully",
-			SubMessage: "Store Data fetched Successfully",
-			StatusCode: http.StatusOK,
-		})
-
+		return
 	}
+
+	c.JSON(http.StatusOK, models.SuccessResponse{
+		Data:       storeData,
+		Message:    "Store Data fetched Successfully",
+		SubMessage: "Store Data fetched Successfully",
+		StatusCode: http.StatusOK,
+	})
 }

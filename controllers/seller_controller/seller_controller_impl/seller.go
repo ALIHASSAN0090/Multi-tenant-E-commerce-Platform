@@ -24,6 +24,8 @@ func NewSellerImpl(input SellerController) seller_controller.SellerController {
 	}
 }
 
-func (sc *SellerControllerImpl) GetStore(seller_id int64) (models.GetStoreData, error) {
+func (sc *SellerControllerImpl) GetStoreItems(seller_id int64) ([]models.Item, error) {
+
+	return sc.SellerDao.GetStoreItemsDB(seller_id)
 
 }

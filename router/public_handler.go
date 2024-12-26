@@ -77,3 +77,19 @@ func (r *Router) Login(c *gin.Context) {
 	}
 
 }
+
+func GetContextID(c *gin.Context) (int64, bool) {
+	IDInterface, exists := c.Get("Id")
+	if !exists {
+		c.JSON(400, gin.H{"error": "Seller ID not found"})
+		return 0, false
+	}
+
+	ID, ok := IDInterface.(int64)
+	if !ok {
+		c.JSON(400, gin.H{"error": "Seller ID is not valid"})
+		return 0, false
+	}
+
+	return ID, true
+}

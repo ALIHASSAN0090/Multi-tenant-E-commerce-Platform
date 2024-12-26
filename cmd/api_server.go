@@ -59,7 +59,7 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 
 	ValidationService := Validation.NewValidationService()
 
-	AuthDao, AdminDao, UserDao, SellerDao := Dao.NewAuthDao(postgresDB), Dao.NewAdminDao(postgresDB), Dao.NewUserDao(postgresDB), Dao.SellerDao(postgresDB)
+	AuthDao, AdminDao, UserDao, SellerDao := Dao.NewAuthDao(postgresDB), Dao.NewAdminDao(postgresDB), Dao.NewUserDao(postgresDB), Dao.NewSellerDao(postgresDB)
 
 	logger.Info("Starting Api Server")
 
