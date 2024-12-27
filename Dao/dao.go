@@ -22,4 +22,7 @@ type SellerDao interface {
 	GetStoreItemsDB(seller_id int64) ([]models.Item, error)
 	GetStoreItemDB(id int64) (models.Item, error)
 	UpdateStoreItem(id int64, item models.Item) (models.Item, error)
+	GetStoreIDByUserID(userID int64) (int64, error)
+	CreateItem(store_id int64, item models.Item) (models.Item, error)
+	GetStore(sellerID int64) (models.Store, error)
 }

@@ -101,3 +101,56 @@ func (s *SellerDaoImpl) UpdateStoreItem(id int64, item models.Item) (models.Item
 
 	return updatedItem, nil
 }
+
+func (s *SellerDaoImpl) CreateItem(store_id int64, item models.Item) (models.Item, error) {
+
+	checkQuery := `
+	SELECT COUNT(*)
+	FROM items
+	WHERE name = $1 AND store_id = $2
+	`
+
+	var count int
+	err := s.db.QueryRow(checkQuery, item.Name, store_id).Scan(&count)
+	if err != nil {
+		return models.Item{}, err
+	}
+
+	if count > 0 {
+		return models.Item{}, fmt.Errorf("item with name '%s' already exists in store", item.Name)
+	}
+
+	query := `
+	INSERT INTO items (name, store_id, price, stock_quantity, item_img, description, discount, created_at)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+	RETURNING id, name, store_id, price, stock_quantity, item_img, description, discount, created_at
+	`
+
+	var createdItem models.Item
+	err = s.db.QueryRow(query, item.Name, store_id, item.Price, item.StockQuantity, item.ItemImg, item.Description, item.Discount).Scan(
+		&createdItem.ID, &createdItem.Name, &createdItem.StoreID, &createdItem.Price, &createdItem.StockQuantity, &createdItem.ItemImg, &createdItem.Description, &createdItem.Discount, &createdItem.CreatedAt,
+	)
+	if err != nil {
+		return models.Item{}, err
+	}
+
+	return createdItem, nil
+}
+
+func (s *SellerDaoImpl) GetStore(sellerID int64) (models.Store, error) {
+	query := `
+	SELECT id, store_img, seller_id, store_name, store_description, store_address, created_at, updated_at 
+	FROM stores 
+	WHERE seller_id = $1
+	`
+
+	var store models.Store
+	err := s.db.QueryRow(query, sellerID).Scan(
+		&store.ID, &store.StoreImg, &store.SellerID, &store.StoreName, &store.StoreDescription, &store.StoreAddress, &store.CreatedAt, &store.UpdatedAt,
+	)
+	if err != nil {
+		return models.Store{}, err
+	}
+
+	return store, nil
+}

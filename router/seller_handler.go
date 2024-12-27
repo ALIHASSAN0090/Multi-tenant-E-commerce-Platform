@@ -118,3 +118,83 @@ func (r *Router) UpdateItem(c *gin.Context) {
 		StatusCode: http.StatusOK,
 	})
 }
+
+func (r *Router) CreateItem(c *gin.Context) {
+
+	var item models.Item
+	if err := c.ShouldBindJSON(&item); err != nil {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusBadRequest,
+				Message:    "Invalid JSON format",
+				Detail:     err.Error(),
+			},
+		})
+		return
+	}
+
+	sellerID, valid := GetContextID(c)
+	if !valid {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusBadRequest,
+				Message:    "Invalid Seller ID",
+				Detail:     "Seller ID not found or invalid",
+			},
+		})
+		return
+	}
+
+	created_item, err := r.SellerController.CreateItem(c, sellerID, item)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error in calling CreateItem controller",
+				Detail:     err.Error(),
+			},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models.SuccessResponse{
+		Data:       created_item,
+		Message:    "Store Item created and fetched Successfully",
+		SubMessage: "Store Item created and fetched Successfully",
+		StatusCode: http.StatusOK,
+	})
+}
+
+func (r *Router) GetStore(c *gin.Context) {
+
+	sellerID, valid := GetContextID(c)
+	if !valid {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusBadRequest,
+				Message:    "Invalid Seller ID",
+				Detail:     "Seller ID not found or invalid",
+			},
+		})
+		return
+	}
+
+	store, err := r.SellerController.GetStore(c, sellerID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error in calling CreateItem controller",
+				Detail:     err.Error(),
+			},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models.SuccessResponse{
+		Data:       store,
+		Message:    "Store fetched Successfully",
+		SubMessage: "Store fetched Successfully",
+		StatusCode: http.StatusOK,
+	})
+}

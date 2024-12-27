@@ -21,7 +21,9 @@ func (r *Router) SetupRoutes() {
 		sellerGroup.GET("/health-check", r.HealthCheck)
 		sellerGroup.GET("/items", r.GetStoreItems)
 		sellerGroup.GET("/item/:id", r.GetStoreItem)
+		sellerGroup.POST("/item", r.CreateItem)
 		sellerGroup.PATCH("/item/:id", r.UpdateItem)
+		sellerGroup.GET("/store", r.GetStore)
 
 	}
 

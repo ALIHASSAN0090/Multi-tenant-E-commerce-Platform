@@ -43,3 +43,32 @@ func (sc *SellerControllerImpl) UpdateStoreItem(c *gin.Context, id int64, item m
 	return sc.SellerDao.UpdateStoreItem(id, item)
 
 }
+
+func (sc *SellerControllerImpl) CreateItem(c *gin.Context, seller_id int64, item models.Item) (models.Item, error) {
+	store_id, err := sc.SellerDao.GetStoreIDByUserID(seller_id)
+	if err != nil {
+		return models.Item{}, err
+	}
+
+	createdItem, err := sc.SellerDao.CreateItem(store_id, item)
+	if err != nil {
+		return models.Item{}, err
+	}
+
+	return createdItem, nil
+}
+
+func (sc *SellerControllerImpl) GetStore(c *gin.Context, seller_id int64) (models.Store, error) {
+
+	store_id, err := sc.SellerDao.GetStoreIDByUserID(seller_id)
+	if err != nil {
+		return models.Store{}, err
+	}
+
+	storeData, err := sc.SellerDao.GetStore(store_id)
+	if err != nil {
+		return models.Store{}, err
+	}
+
+	return storeData, nil
+}
