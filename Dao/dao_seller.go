@@ -86,20 +86,14 @@ func (s *SellerDaoImpl) UpdateStoreItem(id int64, item models.Item) (models.Item
 
 	query := `
 		UPDATE items
-		SET name = $1, store_id = $2, price = $3, stock_quantity = $4, item_img = $5, description = $6, discount = $7
-		WHERE id = $8
-		RETURNING id, name, store_id, price, stock_quantity, item_img, description, discount
+		SET name = $1, price = $2, stock_quantity = $3, item_img = $4, description = $5, discount = $6, updated_at = NOW()
+		WHERE id = $7
+		RETURNING id, name, store_id, price, stock_quantity, item_img, description, discount, updated_at
 	`
-	// Prepare the statement
-	stmt, err := s.db.Prepare(query)
-	if err != nil {
-		return models.Item{}, err
-	}
-	defer stmt.Close()
 
 	var updatedItem models.Item
-	err = stmt.QueryRow(item.Name, item.StoreID, item.Price, item.StockQuantity, item.ItemImg, item.Description, item.Discount, id).Scan(
-		&updatedItem.ID, &updatedItem.Name, &updatedItem.StoreID, &updatedItem.Price, &updatedItem.StockQuantity, &updatedItem.ItemImg, &updatedItem.Description, &updatedItem.Discount,
+	err := s.db.QueryRow(query, item.Name, item.Price, item.StockQuantity, item.ItemImg, item.Description, item.Discount, id).Scan(
+		&updatedItem.ID, &updatedItem.Name, &updatedItem.StoreID, &updatedItem.Price, &updatedItem.StockQuantity, &updatedItem.ItemImg, &updatedItem.Description, &updatedItem.Discount, &updatedItem.UpdatedAt,
 	)
 	if err != nil {
 		return models.Item{}, err
