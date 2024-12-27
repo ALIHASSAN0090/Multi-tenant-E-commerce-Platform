@@ -20,6 +20,8 @@ func (r *Router) SetupRoutes() {
 		sellerGroup.Use(middleware.Auth([]string{"seller", "admin"}))
 		sellerGroup.GET("/health-check", r.HealthCheck)
 		sellerGroup.GET("/items", r.GetStoreItems)
+		sellerGroup.GET("/item/:id", r.GetStoreItem)
+		sellerGroup.PATCH("/item/:id", r.UpdateItem)
 
 	}
 

@@ -5,6 +5,8 @@ import (
 	"ecommerce-platform/Dao"
 	"ecommerce-platform/controllers/seller_controller"
 	"ecommerce-platform/models"
+
+	"github.com/gin-gonic/gin"
 )
 
 type SellerControllerImpl struct {
@@ -27,5 +29,17 @@ func NewSellerImpl(input SellerController) seller_controller.SellerController {
 func (sc *SellerControllerImpl) GetStoreItems(seller_id int64) ([]models.Item, error) {
 
 	return sc.SellerDao.GetStoreItemsDB(seller_id)
+
+}
+
+func (sc *SellerControllerImpl) GetStoreItem(c *gin.Context, id int64) (models.Item, error) {
+
+	return sc.SellerDao.GetStoreItemDB(id)
+
+}
+
+func (sc *SellerControllerImpl) UpdateStoreItem(c *gin.Context, id int64, item models.Item) (models.Item, error) {
+
+	return sc.SellerDao.UpdateStoreItem(id, item)
 
 }
