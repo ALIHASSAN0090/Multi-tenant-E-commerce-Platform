@@ -52,3 +52,7 @@ func (uc *UsercontrollerImpl) CreateSellerStore(c *gin.Context, seller models.Se
 
 	return sellerData, storeData, nil
 }
+
+func (uc *UsercontrollerImpl) GetStores(c *gin.Context) ([]models.Store, error) {
+	return uc.UserDao.GetStores()
+}

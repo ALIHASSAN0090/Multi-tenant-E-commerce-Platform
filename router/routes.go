@@ -32,6 +32,7 @@ func (r *Router) SetupRoutes() {
 		userGroup.Use(middleware.Auth([]string{"user", "admin", "seller"}))
 		userGroup.GET("/health-check", r.HealthCheck)
 		userGroup.POST("/create/seller/store", r.CreateSeller)
+		userGroup.GET("/stores", r.GetStores)
 	}
 
 	publicGroup := r.Engine.Group("/public")

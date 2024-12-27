@@ -100,3 +100,27 @@ func (dao *UserDaoImpl) ChangeRoleToSeller(id int64) (bool, error) {
 
 	return true, nil
 }
+
+func (dao *UserDaoImpl) GetStores() ([]models.Store, error) {
+	query := `SELECT id, store_img, store_name, store_description FROM stores`
+	rows, err := dao.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var stores []models.Store
+	for rows.Next() {
+		var store models.Store
+		if err := rows.Scan(&store.ID, &store.StoreImg, &store.StoreName, &store.StoreDescription); err != nil {
+			return nil, err
+		}
+		stores = append(stores, store)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return stores, nil
+}

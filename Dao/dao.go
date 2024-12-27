@@ -16,6 +16,7 @@ type UserDao interface {
 	CreateStore(store models.SellerStore, seller_id int64) (models.Store, error)
 	checkExistingSeller(userID int64) (bool, error)
 	ChangeRoleToSeller(id int64) (bool, error)
+	GetStores() ([]models.Store, error)
 }
 
 type SellerDao interface {

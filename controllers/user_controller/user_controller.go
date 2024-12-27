@@ -8,4 +8,5 @@ import (
 
 type UserControllerConfig interface {
 	CreateSellerStore(c *gin.Context, seller models.SellerStore) (models.Seller, models.Store, error)
+	GetStores(c *gin.Context) ([]models.Store, error)
 }

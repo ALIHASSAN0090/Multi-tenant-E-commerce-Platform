@@ -60,3 +60,26 @@ func (r *Router) CreateSeller(c *gin.Context) {
 		})
 	}
 }
+
+func (r *Router) GetStores(c *gin.Context) {
+
+	stores, err := r.UserController.GetStores(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error in calling create seller controller",
+				Detail:     err.Error(),
+			},
+		})
+	} else {
+
+		c.JSON(http.StatusOK, models.SuccessResponse{
+			Data:       stores,
+			Message:    "Store Successfully",
+			SubMessage: "Seller and Store Created Successfully",
+			StatusCode: http.StatusOK,
+		})
+	}
+
+}
