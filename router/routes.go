@@ -33,6 +33,8 @@ func (r *Router) SetupRoutes() {
 		userGroup.GET("/health-check", r.HealthCheck)
 		userGroup.POST("/create/seller/store", r.CreateSeller)
 		userGroup.GET("/stores", r.GetStores)
+		userGroup.GET("/store/:id", r.GetStoreAndItems)
+		userGroup.GET("/store/item/:id", r.GetStoreItem)
 	}
 
 	publicGroup := r.Engine.Group("/public")

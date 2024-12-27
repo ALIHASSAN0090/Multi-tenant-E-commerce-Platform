@@ -3,6 +3,7 @@ package router
 import (
 	"ecommerce-platform/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -82,4 +83,38 @@ func (r *Router) GetStores(c *gin.Context) {
 		})
 	}
 
+}
+
+func (r *Router) GetStoreAndItems(c *gin.Context) {
+
+	store_id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusBadRequest,
+				Message:    "Invalid store ID",
+				Detail:     err.Error(),
+			},
+		})
+		return
+	}
+
+	store, err := r.UserController.GetStoreItems(c, store_id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error in calling create seller controller",
+				Detail:     err.Error(),
+			},
+		})
+	} else {
+
+		c.JSON(http.StatusOK, models.SuccessResponse{
+			Data:       store,
+			Message:    "Store Successfully",
+			SubMessage: "Seller and Store Created Successfully",
+			StatusCode: http.StatusOK,
+		})
+	}
 }

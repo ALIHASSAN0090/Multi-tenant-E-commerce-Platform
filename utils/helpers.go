@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"net/http"
 	"reflect"
 	"time"
@@ -72,4 +73,12 @@ func VerifyPassword(userPassword string, providedPassword string) (bool, string)
 	}
 
 	return true, "Password matched"
+}
+
+func GetDiscountedPrice(originalPrice float32, discount int64) (float64, error) {
+	if discount < 0 || discount > 100 {
+		return 0, fmt.Errorf("discount must be between 0 and 100")
+	}
+	discountedPrice := float64(originalPrice) * (1 - float64(discount)/100)
+	return discountedPrice, nil
 }

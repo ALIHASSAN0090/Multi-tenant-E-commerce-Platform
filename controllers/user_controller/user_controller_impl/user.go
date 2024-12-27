@@ -56,3 +56,8 @@ func (uc *UsercontrollerImpl) CreateSellerStore(c *gin.Context, seller models.Se
 func (uc *UsercontrollerImpl) GetStores(c *gin.Context) ([]models.Store, error) {
 	return uc.UserDao.GetStores()
 }
+
+func (uc *UsercontrollerImpl) GetStoreItems(c *gin.Context, store_id int64) (models.StoreItems, error) {
+
+	return uc.UserDao.GetStoreItems(store_id)
+}

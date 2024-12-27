@@ -5,6 +5,7 @@ import (
 	"ecommerce-platform/Dao"
 	"ecommerce-platform/controllers/seller_controller"
 	"ecommerce-platform/models"
+	"ecommerce-platform/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -34,7 +35,20 @@ func (sc *SellerControllerImpl) GetStoreItems(seller_id int64) ([]models.Item, e
 
 func (sc *SellerControllerImpl) GetStoreItem(c *gin.Context, id int64) (models.Item, error) {
 
-	return sc.SellerDao.GetStoreItemDB(id)
+	item, err := sc.SellerDao.GetStoreItemDB(id)
+	if err != nil {
+		return models.Item{}, err
+	}
+
+	if item.Discount > 0 {
+
+		discounted_price, err := utils.GetDiscountedPrice(float32(item.Price), item.Discount)
+		utils.HandleError(err)
+
+		item.DiscountedPrice = discounted_price
+	}
+
+	return item, nil
 
 }
 

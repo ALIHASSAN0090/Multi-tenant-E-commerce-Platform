@@ -124,3 +124,47 @@ func (dao *UserDaoImpl) GetStores() ([]models.Store, error) {
 
 	return stores, nil
 }
+
+func (dao *UserDaoImpl) GetStoreItems(store_id int64) (models.StoreItems, error) {
+	query := `SELECT s.id, s.store_img, s.store_name, s.store_description, i.id, i.name, i.description, i.price, i.discount 
+	          FROM stores AS s
+	          JOIN items AS i ON i.store_id = s.id
+	          WHERE s.id = $1`
+
+	rows, err := dao.db.Query(query, store_id)
+	if err != nil {
+		return models.StoreItems{}, err
+	}
+	defer rows.Close()
+
+	var storeItems models.StoreItems
+	var initialized bool
+
+	for rows.Next() {
+		var item models.Item
+		if err := rows.Scan(&storeItems.ID, &storeItems.StoreImg, &storeItems.StoreName, &storeItems.StoreDescription,
+			&item.ID, &item.Name, &item.Description, &item.Price, &item.Discount); err != nil {
+			return models.StoreItems{}, err
+		}
+
+		if !initialized {
+			storeItems = models.StoreItems{
+				ID:       storeItems.ID,
+				StoreImg: storeItems.StoreImg,
+
+				StoreName:        storeItems.StoreName,
+				StoreDescription: storeItems.StoreDescription,
+				Items:            []models.Item{},
+			}
+			initialized = true
+		}
+
+		storeItems.Items = append(storeItems.Items, item)
+	}
+
+	if err := rows.Err(); err != nil {
+		return models.StoreItems{}, err
+	}
+
+	return storeItems, nil
+}

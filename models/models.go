@@ -90,19 +90,29 @@ type Seller struct {
 	DeletedAt     *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
 }
 
-// Item model
 type Item struct {
-	ID            int64      `json:"id" db:"id"`
-	ItemImg       string     `json:"item_img" db:"item_img"`
-	StoreID       int64      `json:"store_id" db:"store_id"`
-	Name          string     `json:"name" db:"name"`
-	Description   string     `json:"description" db:"description"`
-	Price         float64    `json:"price" db:"price"`
-	StockQuantity int        `json:"stock_quantity" db:"stock_quantity"`
-	CreatedAt     time.Time  `json:"created_at" db:"created_at"`
-	UpdatedAt     *time.Time `json:"updated_at,omitempty" db:"updated_at"`
-	DeletedAt     *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
-	Discount      int64      `json:"discount" db:"discount"`
+	ID              int64      `json:"id" db:"id"`
+	ItemImg         string     `json:"item_img" db:"item_img"`
+	StoreID         int64      `json:"store_id" db:"store_id"`
+	Name            string     `json:"name" db:"name"`
+	Description     string     `json:"description" db:"description"`
+	Price           float64    `json:"price" db:"price"`
+	DiscountedPrice float64    `json:"discounted_price,omitempty" db:"discounted_price"`
+	StockQuantity   int        `json:"stock_quantity" db:"stock_quantity"`
+	CreatedAt       time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt       *time.Time `json:"updated_at,omitempty" db:"updated_at"`
+	DeletedAt       *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
+	Discount        int64      `json:"discount,omitempty" db:"discount"`
+}
+
+type StoreItems struct {
+	ID               int64  `json:"id" db:"id"`
+	StoreImg         string `json:"store_img" db:"store_img"`
+	SellerID         int64  `json:"seller_id" db:"seller_id"`
+	StoreName        string `json:"store_name" db:"store_name"`
+	StoreDescription string `json:"store_description" db:"store_description"`
+	StoreAddress     string `json:"store_address" db:"store_address"`
+	Items            []Item `json:"items" db:"items"`
 }
 
 // Order model
