@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"ecommerce-platform/models"
 	"fmt"
+
+	"github.com/gin-gonic/gin"
 )
 
 type SellerDaoImpl struct {
@@ -153,4 +155,20 @@ func (s *SellerDaoImpl) GetStore(sellerID int64) (models.Store, error) {
 	}
 
 	return store, nil
+}
+
+func (s *SellerDaoImpl) IsActive(c *gin.Context, seller_id int64) (bool, error) {
+	query := `
+	SELECT active
+	FROM seller
+	WHERE id = $1
+	`
+
+	var active bool
+	err := s.db.QueryRow(query, seller_id).Scan(&active)
+	if err != nil {
+		return false, err
+	}
+
+	return active, nil
 }

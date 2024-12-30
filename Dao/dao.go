@@ -1,6 +1,10 @@
 package Dao
 
-import "ecommerce-platform/models"
+import (
+	"ecommerce-platform/models"
+
+	"github.com/gin-gonic/gin"
+)
 
 type AuthDao interface {
 	SignUp(req *models.Users) (*models.Users, error)
@@ -18,6 +22,9 @@ type UserDao interface {
 	ChangeRoleToSeller(id int64) (bool, error)
 	GetStores() ([]models.Store, error)
 	GetStoreItems(store_id int64) (models.StoreItems, error)
+	GetTotalPriceUnitPrice(items []models.OrderItem) (float64, error)
+	CreateOrder(orderData models.CreateOrder) (int64, error)
+	CreateItems(orderId int64, items []models.OrderItem) ([]models.OrderItem, error)
 }
 
 type SellerDao interface {
@@ -27,4 +34,5 @@ type SellerDao interface {
 	GetStoreIDByUserID(userID int64) (int64, error)
 	CreateItem(store_id int64, item models.Item) (models.Item, error)
 	GetStore(sellerID int64) (models.Store, error)
+	IsActive(c *gin.Context, seller_id int64) (bool, error)
 }

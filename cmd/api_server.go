@@ -62,6 +62,7 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 	AuthDao, AdminDao, UserDao, SellerDao := Dao.NewAuthDao(postgresDB), Dao.NewAdminDao(postgresDB), Dao.NewUserDao(postgresDB), Dao.NewSellerDao(postgresDB)
 
 	logger.Info("Starting Api Server")
+	// middleware.StatusCheck(SellerDao)
 
 	AuthService := AuthServiceImpl.NewAuthService(AuthServiceImpl.NewAuthServiceImpl{
 		Logger:  logger,

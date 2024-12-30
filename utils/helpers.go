@@ -82,3 +82,19 @@ func GetDiscountedPrice(originalPrice float32, discount int64) (float64, error) 
 	discountedPrice := float64(originalPrice) * (1 - float64(discount)/100)
 	return discountedPrice, nil
 }
+
+func GetContextId(c *gin.Context) (int64, error) {
+	idInterface, exists := c.Get("Id")
+	if !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID not found in context"})
+		return 0, fmt.Errorf("ID not found in context")
+	}
+
+	idUint, ok := idInterface.(uint)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "ID is not a uint"})
+		return 0, fmt.Errorf("ID is not a uint")
+	}
+
+	return int64(idUint), nil
+}

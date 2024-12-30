@@ -57,19 +57,6 @@ type Store struct {
 	DeletedAt        *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
 }
 
-// OrderItem model
-type OrderItem struct {
-	ID           int64      `json:"id" db:"id"`
-	OrderID      int64      `json:"order_id" db:"order_id"`
-	ItemID       int64      `json:"item_id" db:"item_id"`
-	Quantity     int        `json:"quantity" db:"quantity"`
-	PricePerItem float64    `json:"price_per_item" db:"price_per_item"`
-	TotalPrice   float64    `json:"total_price" db:"total_price"`
-	CreatedAt    time.Time  `json:"created_at" db:"created_at"`
-	UpdatedAt    *time.Time `json:"updated_at,omitempty" db:"updated_at"`
-	DeletedAt    *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
-}
-
 type Role struct {
 	ID   int64  `json:"id" db:"id"`
 	Name string `json:"name" db:"name"`
@@ -127,6 +114,23 @@ type Order struct {
 	DeletedAt  *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
 	CreatedBy  int64      `json:"created_by" db:"created_by"`
 	UpdatedBy  *int64     `json:"updated_by,omitempty" db:"updated_by"`
+}
+
+type OrderItem struct {
+	ID           int64      `json:"id" db:"id"`
+	OrderID      int64      `json:"order_id" db:"order_id"`
+	ItemID       int64      `json:"item_id" db:"item_id"`
+	Quantity     int        `json:"quantity" db:"quantity"`
+	PricePerItem float64    `json:"price_per_item" db:"price_per_item"`
+	TotalPrice   float64    `json:"total_price" db:"total_price"`
+	CreatedAt    time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt    *time.Time `json:"updated_at,omitempty" db:"updated_at"`
+	DeletedAt    *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
+}
+
+type CreateOrder struct {
+	Order      Order       `json:"order" db:"order"`
+	OrderItems []OrderItem `json:"order_items" db:"order_items"`
 }
 
 // Payment model

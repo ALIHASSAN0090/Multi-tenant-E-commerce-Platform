@@ -3,6 +3,7 @@ package Dao
 import (
 	"database/sql"
 	"ecommerce-platform/models"
+	"ecommerce-platform/utils"
 	"fmt"
 	"time"
 )
@@ -15,6 +16,63 @@ func NewUserDao(db *sql.DB) UserDao {
 
 type UserDaoImpl struct {
 	db *sql.DB
+}
+
+func (dao *UserDaoImpl) CreateItems(orderId int64, items []models.OrderItem) ([]models.OrderItem, error) {
+	var createdItems []models.OrderItem
+
+	query := `INSERT INTO order_items (order_id, item_id, quantity, price_per_item, total_price, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, item_id, quantity, price_per_item, total_price`
+
+	for _, item := range items {
+		var createdItem models.OrderItem
+		err := dao.db.QueryRow(query, orderId, item.ItemID, item.Quantity, item.PricePerItem, item.TotalPrice, time.Now()).Scan(&createdItem.ID, &createdItem.ItemID, &createdItem.Quantity, &createdItem.PricePerItem, &createdItem.TotalPrice)
+		if err != nil {
+			return nil, err
+		}
+		createdItems = append(createdItems, createdItem)
+	}
+
+	return createdItems, nil
+}
+
+func (dao *UserDaoImpl) GetTotalPriceUnitPrice(items []models.OrderItem) (float64, error) {
+	var totalPrice float64
+	// var unitPrice []int
+
+	for _, item := range items {
+		var price, discount int64
+
+		query := `SELECT i.price, i.discount FROM order_items as oi
+		JOIN items as i
+		ON i.id = oi.item_id
+		WHERE oi.item_id = $1`
+		err := dao.db.QueryRow(query, item.ItemID).Scan(&price, &discount)
+		if err != nil {
+			return 0, err
+		}
+
+		finalPrice := float64(price)
+		if discount > 0 {
+			discountedPrice, err := utils.GetDiscountedPrice(float32(price), discount)
+			if err != nil {
+				return 0, err
+			}
+			finalPrice = float64(discountedPrice)
+		}
+
+		totalPrice += finalPrice
+	}
+	return totalPrice, nil
+}
+
+func (dao *UserDaoImpl) CreateOrder(orderData models.CreateOrder) (int64, error) {
+	query := `INSERT INTO orders(user_id, store_id, total_price, status, created_at, created_by) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`
+	var orderID int64
+	err := dao.db.QueryRow(query, orderData.Order.UserID, orderData.Order.StoreID, orderData.Order.TotalPrice, "pending", time.Now(), orderData.Order.CreatedBy).Scan(&orderID)
+	if err != nil {
+		return 0, err
+	}
+	return orderID, nil
 }
 
 func (dao *UserDaoImpl) CreateSeller(seller models.SellerStore) (models.Seller, error) {

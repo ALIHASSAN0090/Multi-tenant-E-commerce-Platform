@@ -27,6 +27,31 @@ func NewUserImpl(config UserControllerConfig) user_controller.UserControllerConf
 	}
 }
 
+func (uc *UsercontrollerImpl) CreateOrder(c *gin.Context, orderData models.CreateOrder) (models.CreateOrder, error) {
+	TotalPrice, err := uc.UserDao.GetTotalPriceUnitPrice(orderData.OrderItems)
+	if err != nil {
+		utils.HandleError(err)
+		return models.CreateOrder{}, err
+	}
+
+	orderData.Order.TotalPrice = TotalPrice
+
+	orderId, err := uc.UserDao.CreateOrder(orderData)
+	if err != nil {
+		utils.HandleError(err)
+		return models.CreateOrder{}, err
+	}
+
+	createdItems, err := uc.UserDao.CreateItems(orderId, orderData.OrderItems)
+	if err != nil {
+		utils.HandleError(err)
+		return models.CreateOrder{}, err
+	}
+
+	orderData.OrderItems = createdItems
+
+	return orderData, nil
+}
 func (uc *UsercontrollerImpl) CreateSellerStore(c *gin.Context, seller models.SellerStore) (models.Seller, models.Store, error) {
 	sellerData, err := uc.UserDao.CreateSeller(seller)
 	if err != nil {

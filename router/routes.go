@@ -35,6 +35,7 @@ func (r *Router) SetupRoutes() {
 		userGroup.GET("/stores", r.GetStores)
 		userGroup.GET("/store/:id", r.GetStoreAndItems)
 		userGroup.GET("/store/item/:id", r.GetStoreItem)
+		userGroup.POST("/create/order", r.CreateOrder)
 	}
 
 	publicGroup := r.Engine.Group("/public")

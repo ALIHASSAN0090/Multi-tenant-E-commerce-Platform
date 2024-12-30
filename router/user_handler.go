@@ -2,12 +2,60 @@ package router
 
 import (
 	"ecommerce-platform/models"
+	"ecommerce-platform/utils"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
+func (r *Router) CreateOrder(c *gin.Context) {
+	var orderData models.CreateOrder
+
+	id, err := utils.GetContextId(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error in getting context id",
+				Detail:     err.Error(),
+			},
+		})
+		return
+	}
+	if err := c.ShouldBindJSON(&orderData); err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Failed to bind JSON",
+				Detail:     err.Error(),
+			},
+		})
+		return
+	}
+
+	orderData.Order.UserID, orderData.Order.CreatedBy = id, id
+
+	data, err := r.UserController.CreateOrder(c, orderData)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error in calling create Order controller",
+				Detail:     err.Error(),
+			},
+		})
+	} else {
+
+		c.JSON(http.StatusOK, models.SuccessResponse{
+			Data:       data,
+			Message:    "Order Created Successfully",
+			SubMessage: "Order Created Successfully",
+			StatusCode: http.StatusOK,
+		})
+	}
+
+}
 func (r *Router) CreateSeller(c *gin.Context) {
 
 	var data models.SellerStore
