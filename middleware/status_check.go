@@ -24,7 +24,7 @@ func StatusCheck(next gin.HandlerFunc) gin.HandlerFunc {
 
 		user, err := Db.IsActive(c, userId)
 		if err != nil || !user {
-			abortWithError(c, http.StatusUnauthorized, "Access denied", "Your Account status is disable")
+			abortWithError(c, http.StatusUnauthorized, "Access denied", "Your Account status is disabled")
 			return
 		}
 

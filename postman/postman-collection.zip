@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b1d777e5-8265-44ad-82f8-991d000c5e59",
+		"_postman_id": "4d965964-1a62-4d74-89aa-1dff8e7637a4",
 		"name": "Gocommerce",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "26799611"
@@ -23,6 +23,62 @@
 							"path": [
 								"public",
 								"health-check"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"alihassankhan28@gmail.com\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8005/public/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signup-user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_name\": \"Ali\",\n  \"email\": \"alihassankhan28@gmail.com\",\n  \"password\": \"password123\",\n  \"phone_number\": \"+1234567890\",\n   \"address\": \"123 Main St, Anytown, USA\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8005/public/signup",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"public",
+								"signup"
 							]
 						}
 					},
@@ -55,7 +111,7 @@
 			]
 		},
 		{
-			"name": "client routes",
+			"name": "seller routes",
 			"item": [
 				{
 					"name": "health check",
@@ -71,6 +127,171 @@
 							"path": [
 								"client",
 								"health-check"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get store items by context id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGloYXNzYW5raGFuMjhAZ21haWwuY29tIiwibmFtZSI6IkFsaSIsInJvbGUiOiJzZWxsZXIiLCJleHAiOjE3MzUzNjA1Mzh9.wg46Qa-Xbs5vndBXqlyujZEgpxJmXMu7K_gDd7hvui8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8005/seller/items",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"seller",
+								"items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get item by item table id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGloYXNzYW5raGFuMjhAZ21haWwuY29tIiwibmFtZSI6IkFsaSIsInJvbGUiOiJzZWxsZXIiLCJleHAiOjE3MzUzNjA1Mzh9.wg46Qa-Xbs5vndBXqlyujZEgpxJmXMu7K_gDd7hvui8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8005/seller/item/8",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"seller",
+								"item",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update item by table id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGloYXNzYW5raGFuMjhAZ21haWwuY29tIiwibmFtZSI6IkFsaSIsInJvbGUiOiJzZWxsZXIiLCJleHAiOjE3MzUzNjA1Mzh9.wg46Qa-Xbs5vndBXqlyujZEgpxJmXMu7K_gDd7hvui8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"item_img\": \"https://example.com/image.png\",\n  \"name\": \"burger updated\",\n  \"description\": \"This is a sample item description.\",\n  \"price\": 400.00,\n  \"stock_quantity\": 100,\n  \"discount\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8005/seller/item/8",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"seller",
+								"item",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "created store item",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGloYXNzYW5raGFuMjhAZ21haWwuY29tIiwibmFtZSI6IkFsaSIsInJvbGUiOiJzZWxsZXIiLCJleHAiOjE3MzUzNjA1Mzh9.wg46Qa-Xbs5vndBXqlyujZEgpxJmXMu7K_gDd7hvui8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"item_img\": \"https://example.com/image.png\",\n  \"name\": \"burger shawarma\",\n  \"description\": \"This is a sample item description.\",\n  \"price\": 400.00,\n  \"stock_quantity\": 100,\n  \"discount\": 0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8005/seller/item",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"seller",
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGloYXNzYW5raGFuMjhAZ21haWwuY29tIiwibmFtZSI6IkFsaSIsInJvbGUiOiJzZWxsZXIiLCJleHAiOjE3MzU3MTE0Mjd9.uJpGkkRg6Yce1MdJ7cG0sxBaAMMw7GZf1R_pipvsYNk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8005/seller/store",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"seller",
+								"store"
 							]
 						}
 					},
@@ -95,6 +316,167 @@
 							"path": [
 								"user",
 								"health-check"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create seller and store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGloYXNzYW5raGFuMjhAZ21haWwuY29tIiwibmFtZSI6IkFsaSIsInJvbGUiOiJ1c2VyIiwiZXhwIjoxNzM1Mjc2MjkwfQ.n3UOGbTJriZprgIDSNPvjMM0nR6b1D5ATHnCSbjvyYs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \n  \"seller_img\": \"https://example.com/seller.jpg\",\n  \"cnic_number\": \"12345-6789012-3\",\n  \"cnic_image\": \"https://example.com/cnic.jpg\",\n  \"business_name\": \"Butcher shop\",\n  \"contact_number\": \"+1234567890\",\n  \"store_img\": \"https://example.com/store.jpg\",\n  \"store_name\": \"Ali Butcher shop\",\n  \"store_description\": \"This is an example store description.\",\n  \"store_address\": \"123 Example Street, Example City, EX 12345\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8005/user/create/seller/store",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"user",
+								"create",
+								"seller",
+								"store"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all stores",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGloYXNzYW5raGFuMjhAZ21haWwuY29tIiwibmFtZSI6IkFsaSIsInJvbGUiOiJzZWxsZXIiLCJleHAiOjE3MzU3MTE0Mjd9.uJpGkkRg6Yce1MdJ7cG0sxBaAMMw7GZf1R_pipvsYNk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8005/user/stores",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"user",
+								"stores"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get store and items by store id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGloYXNzYW5raGFuMjhAZ21haWwuY29tIiwibmFtZSI6IkFsaSIsInJvbGUiOiJzZWxsZXIiLCJleHAiOjE3MzUzODI3ODZ9.deb9d67ciIyQVAT4QzefiwKWZ7T-8Hr80Vvscxj_8-M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8005/user/store/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"user",
+								"store",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get item by item id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhbGloYXNzYW5raGFuMjhAZ21haWwuY29tIiwibmFtZSI6IkFsaSIsInJvbGUiOiJzZWxsZXIiLCJleHAiOjE3MzUzODI3ODZ9.deb9d67ciIyQVAT4QzefiwKWZ7T-8Hr80Vvscxj_8-M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8005/user/store/item/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"user",
+								"store",
+								"item",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create order and items",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order\": {\n    \"store_id\": 456\n   \n  },\n  \"order_items\": [\n    {\n      \"id\": 1,\n      \"item_id\": 101,\n      \"quantity\": 2\n    },\n    {   \n      \"id\": 1,\n      \"item_id\": 101,\n      \"quantity\": 2\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8005/create/order",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"create",
+								"order"
 							]
 						}
 					},
