@@ -2,26 +2,27 @@ package middleware
 
 import (
 	"ecommerce-platform/Dao"
+	"ecommerce-platform/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func StatusCheck(dao Dao.SellerDao) gin.HandlerFunc {
+var Db *Dao.SellerDaoImpl
+
+func StatusCheck(next gin.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userIdInterface, exists := c.Get("Id")
-		if !exists {
-			abortWithError(c, http.StatusUnauthorized, "Access denied", "Unauthorized")
+
+		userId, err := utils.GetContextId(c)
+		utils.HandleError(err)
+
+		if Db == nil {
+
+			abortWithError(c, http.StatusInternalServerError, "Internal server error", "DAO is not initialized")
 			return
 		}
 
-		userId, ok := userIdInterface.(int64)
-		if !ok {
-			abortWithError(c, http.StatusInternalServerError, "Internal server error", "User ID is not of type int64")
-			return
-		}
-
-		user, err := dao.IsActive(c, userId)
+		user, err := Db.IsActive(c, userId)
 		if err != nil || !user {
 			abortWithError(c, http.StatusUnauthorized, "Access denied", "Your Account status is disable")
 			return

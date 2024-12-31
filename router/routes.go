@@ -11,6 +11,7 @@ func (r *Router) SetupRoutes() {
 	adminGroup := r.Engine.Group("/admin")
 	{
 		adminGroup.Use(middleware.Auth([]string{"admin"}))
+
 		adminGroup.GET("/health-check", r.HealthCheck)
 
 	}
@@ -18,6 +19,8 @@ func (r *Router) SetupRoutes() {
 	sellerGroup := r.Engine.Group("/seller")
 	{
 		sellerGroup.Use(middleware.Auth([]string{"seller", "admin"}))
+		sellerGroup.Use(middleware.StatusCheck(r.Engine.HandleContext))
+
 		sellerGroup.GET("/health-check", r.HealthCheck)
 		sellerGroup.GET("/items", r.GetStoreItems)
 		sellerGroup.GET("/item/:id", r.GetStoreItem)
@@ -30,6 +33,7 @@ func (r *Router) SetupRoutes() {
 	userGroup := r.Engine.Group("/user")
 	{
 		userGroup.Use(middleware.Auth([]string{"user", "admin", "seller"}))
+
 		userGroup.GET("/health-check", r.HealthCheck)
 		userGroup.POST("/create/seller/store", r.CreateSeller)
 		userGroup.GET("/stores", r.GetStores)

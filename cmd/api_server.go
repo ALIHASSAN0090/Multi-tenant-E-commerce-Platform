@@ -14,6 +14,7 @@ import (
 	"log"
 
 	logger "ecommerce-platform/logger/log_service_impl"
+	"ecommerce-platform/middleware"
 	"ecommerce-platform/router"
 	"fmt"
 	"net/http"
@@ -61,8 +62,9 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 
 	AuthDao, AdminDao, UserDao, SellerDao := Dao.NewAuthDao(postgresDB), Dao.NewAdminDao(postgresDB), Dao.NewUserDao(postgresDB), Dao.NewSellerDao(postgresDB)
 
+	middleware.Db = SellerDao
+
 	logger.Info("Starting Api Server")
-	// middleware.StatusCheck(SellerDao)
 
 	AuthService := AuthServiceImpl.NewAuthService(AuthServiceImpl.NewAuthServiceImpl{
 		Logger:  logger,
