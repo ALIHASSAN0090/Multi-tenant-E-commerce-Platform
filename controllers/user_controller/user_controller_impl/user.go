@@ -29,21 +29,32 @@ func NewUserImpl(config UserControllerConfig) user_controller.UserControllerConf
 }
 
 func (uc *UsercontrollerImpl) CreateOrder(c *gin.Context, orderData models.CreateOrder) (models.CreateOrder, error) {
-	TotalPrice, unitPrices, ItemsTotalPrices, err := uc.UserDao.GetTotalPriceUnitPrice(orderData.OrderItems)
+	tx, err := uc.db.Begin()
 	if err != nil {
-		utils.HandleError(err)
+		return models.CreateOrder{}, fmt.Errorf("failed to start transaction: %w", err)
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		}
+	}()
+
+	TotalPrice, unitPrices, ItemsTotalPrices, err := uc.UserDao.GetTotalPriceUnitPrice(tx, orderData.OrderItems)
+	if err != nil {
+		_ = tx.Rollback()
 		return models.CreateOrder{}, err
 	}
 
 	if TotalPrice == 0 {
+		_ = tx.Rollback()
 		return models.CreateOrder{}, fmt.Errorf("no items selected or items not found")
 	}
-
 	orderData.Order.TotalPrice = TotalPrice
 
-	createdOrder, err := uc.UserDao.CreateOrder(orderData)
+	createdOrder, err := uc.UserDao.CreateOrder(tx, orderData)
 	if err != nil {
-		utils.HandleError(err)
+		_ = tx.Rollback()
 		return models.CreateOrder{}, err
 	}
 
@@ -52,19 +63,23 @@ func (uc *UsercontrollerImpl) CreateOrder(c *gin.Context, orderData models.Creat
 		orderData.OrderItems[i].OrderID = createdOrder.ID
 		orderData.OrderItems[i].PricePerItem = float64(unitPrices[i])
 		orderData.OrderItems[i].TotalPrice = ItemsTotalPrices[i]
-
 	}
 
-	createdItems, err := uc.UserDao.CreateItems(orderData.OrderItems)
+	createdItems, err := uc.UserDao.CreateItems(tx, orderData.OrderItems)
 	if err != nil {
-		utils.HandleError(err)
+		_ = tx.Rollback()
 		return models.CreateOrder{}, err
 	}
 
 	orderData.OrderItems = createdItems
 
+	if err := tx.Commit(); err != nil {
+		return models.CreateOrder{}, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
 	return orderData, nil
 }
+
 func (uc *UsercontrollerImpl) CreateSellerStore(c *gin.Context, seller models.SellerStore) (models.Seller, models.Store, error) {
 	sellerData, err := uc.UserDao.CreateSeller(seller)
 	if err != nil {

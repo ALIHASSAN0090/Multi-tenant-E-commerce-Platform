@@ -1,6 +1,7 @@
 package Dao
 
 import (
+	"database/sql"
 	"ecommerce-platform/models"
 
 	"github.com/gin-gonic/gin"
@@ -22,9 +23,9 @@ type UserDao interface {
 	ChangeRoleToSeller(id int64) (bool, error)
 	GetStores() ([]models.Store, error)
 	GetStoreItems(store_id int64) (models.StoreItems, error)
-	GetTotalPriceUnitPrice(items []models.OrderItem) (float64, []int64, []float64, error)
-	CreateOrder(orderData models.CreateOrder) (models.Order, error)
-	CreateItems(items []models.OrderItem) ([]models.OrderItem, error)
+	GetTotalPriceUnitPrice(tx *sql.Tx, items []models.OrderItem) (float64, []int64, []float64, error)
+	CreateOrder(tx *sql.Tx, orderData models.CreateOrder) (models.Order, error)
+	CreateItems(tx *sql.Tx, items []models.OrderItem) ([]models.OrderItem, error)
 }
 
 type SellerDao interface {
