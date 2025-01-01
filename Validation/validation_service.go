@@ -2,6 +2,7 @@ package Validation
 
 import (
 	"ecommerce-platform/Validation/validation_service_impl"
+	"ecommerce-platform/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
@@ -10,6 +11,7 @@ import (
 type ValidationService interface {
 	ValidateReq(c *gin.Context, request interface{}) []string
 	ValidateEmailPassword(fl validator.FieldLevel) bool
+	ValidateOrder(orderData models.CreateOrder) error
 }
 
 func NewValidationService() ValidationService {

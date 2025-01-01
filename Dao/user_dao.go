@@ -18,61 +18,66 @@ type UserDaoImpl struct {
 	db *sql.DB
 }
 
-func (dao *UserDaoImpl) CreateItems(orderId int64, items []models.OrderItem) ([]models.OrderItem, error) {
+func (dao *UserDaoImpl) CreateItems(items []models.OrderItem) ([]models.OrderItem, error) {
+
 	var createdItems []models.OrderItem
 
-	query := `INSERT INTO order_items (order_id, item_id, quantity, price_per_item, total_price, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, item_id, quantity, price_per_item, total_price`
+	query := `INSERT INTO order_items (order_id, item_id, quantity, price_per_item, total_price, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, order_id, item_id, quantity, price_per_item, total_price`
 
 	for _, item := range items {
 		var createdItem models.OrderItem
-		err := dao.db.QueryRow(query, orderId, item.ItemID, item.Quantity, item.PricePerItem, item.TotalPrice, time.Now()).Scan(&createdItem.ID, &createdItem.ItemID, &createdItem.Quantity, &createdItem.PricePerItem, &createdItem.TotalPrice)
+		err := dao.db.QueryRow(query, item.OrderID, item.ID, item.Quantity, item.PricePerItem, item.TotalPrice, time.Now()).Scan(&createdItem.ID, &createdItem.OrderID, &createdItem.ItemID, &createdItem.Quantity, &createdItem.PricePerItem, &createdItem.TotalPrice)
 		if err != nil {
 			return nil, err
 		}
+
 		createdItems = append(createdItems, createdItem)
 	}
 
 	return createdItems, nil
 }
 
-func (dao *UserDaoImpl) GetTotalPriceUnitPrice(items []models.OrderItem) (float64, error) {
+func (dao *UserDaoImpl) GetTotalPriceUnitPrice(items []models.OrderItem) (float64, []int64, []float64, error) {
 	var totalPrice float64
-	// var unitPrice []int
+	var unitPrices []int64
+	var itemsPrices []float64
 
 	for _, item := range items {
-		var price, discount int64
+		var price, finalPrice float64
+		var discount int64
 
-		query := `SELECT i.price, i.discount FROM order_items as oi
-		JOIN items as i
-		ON i.id = oi.item_id
-		WHERE oi.item_id = $1`
-		err := dao.db.QueryRow(query, item.ItemID).Scan(&price, &discount)
-		if err != nil {
-			return 0, err
+		query := `SELECT price, discount FROM items WHERE id = $1`
+		if err := dao.db.QueryRow(query, item.ID).Scan(&price, &discount); err != nil {
+			return 0, nil, nil, err
 		}
 
-		finalPrice := float64(price)
 		if discount > 0 {
 			discountedPrice, err := utils.GetDiscountedPrice(float32(price), discount)
 			if err != nil {
-				return 0, err
+				return 0, nil, nil, err
 			}
-			finalPrice = float64(discountedPrice)
+			finalPrice = discountedPrice * float64(item.Quantity)
+		} else {
+			finalPrice = price * float64(item.Quantity)
 		}
 
+		itemsPrices = append(itemsPrices, finalPrice)
 		totalPrice += finalPrice
+		unitPrices = append(unitPrices, int64(price))
 	}
-	return totalPrice, nil
+
+	return totalPrice, unitPrices, itemsPrices, nil
 }
 
-func (dao *UserDaoImpl) CreateOrder(orderData models.CreateOrder) (int64, error) {
-	query := `INSERT INTO orders(user_id, store_id, total_price, status, created_at, created_by) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`
-	var orderID int64
-	err := dao.db.QueryRow(query, orderData.Order.UserID, orderData.Order.StoreID, orderData.Order.TotalPrice, "pending", time.Now(), orderData.Order.CreatedBy).Scan(&orderID)
+func (dao *UserDaoImpl) CreateOrder(orderData models.CreateOrder) (models.Order, error) {
+	query := `INSERT INTO orders(user_id, store_id, total_price, status, created_at, created_by) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, user_id, store_id, total_price, status, created_at, created_by`
+	var order models.Order
+
+	err := dao.db.QueryRow(query, orderData.Order.UserID, orderData.Order.StoreID, orderData.Order.TotalPrice, "pending", time.Now(), orderData.Order.CreatedBy).Scan(&order.ID, &order.UserID, &order.StoreID, &order.TotalPrice, &order.Status, &order.CreatedAt, &order.CreatedBy)
 	if err != nil {
-		return 0, err
+		return models.Order{}, err
 	}
-	return orderID, nil
+	return order, nil
 }
 
 func (dao *UserDaoImpl) CreateSeller(seller models.SellerStore) (models.Seller, error) {

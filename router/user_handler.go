@@ -34,6 +34,17 @@ func (r *Router) CreateOrder(c *gin.Context) {
 		return
 	}
 
+	if err := r.Val.ValidateOrder(orderData); err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Failed to Validate Order request",
+				Detail:     err.Error(),
+			},
+		})
+		return
+	}
+
 	orderData.Order.UserID, orderData.Order.CreatedBy = id, id
 
 	data, err := r.UserController.CreateOrder(c, orderData)

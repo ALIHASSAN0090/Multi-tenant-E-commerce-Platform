@@ -16,15 +16,15 @@ type AdminDao interface {
 }
 
 type UserDao interface {
-	CreateSeller(models.SellerStore) (models.Seller, error)
+	CreateSeller(seller models.SellerStore) (models.Seller, error)
 	CreateStore(store models.SellerStore, seller_id int64) (models.Store, error)
 	checkExistingSeller(userID int64) (bool, error)
 	ChangeRoleToSeller(id int64) (bool, error)
 	GetStores() ([]models.Store, error)
 	GetStoreItems(store_id int64) (models.StoreItems, error)
-	GetTotalPriceUnitPrice(items []models.OrderItem) (float64, error)
-	CreateOrder(orderData models.CreateOrder) (int64, error)
-	CreateItems(orderId int64, items []models.OrderItem) ([]models.OrderItem, error)
+	GetTotalPriceUnitPrice(items []models.OrderItem) (float64, []int64, []float64, error)
+	CreateOrder(orderData models.CreateOrder) (models.Order, error)
+	CreateItems(items []models.OrderItem) ([]models.OrderItem, error)
 }
 
 type SellerDao interface {

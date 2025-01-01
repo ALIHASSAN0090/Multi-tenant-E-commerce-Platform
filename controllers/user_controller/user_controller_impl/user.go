@@ -6,6 +6,7 @@ import (
 	"ecommerce-platform/controllers/user_controller"
 	"ecommerce-platform/models"
 	"ecommerce-platform/utils"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,21 +29,33 @@ func NewUserImpl(config UserControllerConfig) user_controller.UserControllerConf
 }
 
 func (uc *UsercontrollerImpl) CreateOrder(c *gin.Context, orderData models.CreateOrder) (models.CreateOrder, error) {
-	TotalPrice, err := uc.UserDao.GetTotalPriceUnitPrice(orderData.OrderItems)
+	TotalPrice, unitPrices, ItemsTotalPrices, err := uc.UserDao.GetTotalPriceUnitPrice(orderData.OrderItems)
 	if err != nil {
 		utils.HandleError(err)
 		return models.CreateOrder{}, err
+	}
+
+	if TotalPrice == 0 {
+		return models.CreateOrder{}, fmt.Errorf("no items selected or items not found")
 	}
 
 	orderData.Order.TotalPrice = TotalPrice
 
-	orderId, err := uc.UserDao.CreateOrder(orderData)
+	createdOrder, err := uc.UserDao.CreateOrder(orderData)
 	if err != nil {
 		utils.HandleError(err)
 		return models.CreateOrder{}, err
 	}
 
-	createdItems, err := uc.UserDao.CreateItems(orderId, orderData.OrderItems)
+	orderData.Order = createdOrder
+	for i := range orderData.OrderItems {
+		orderData.OrderItems[i].OrderID = createdOrder.ID
+		orderData.OrderItems[i].PricePerItem = float64(unitPrices[i])
+		orderData.OrderItems[i].TotalPrice = ItemsTotalPrices[i]
+
+	}
+
+	createdItems, err := uc.UserDao.CreateItems(orderData.OrderItems)
 	if err != nil {
 		utils.HandleError(err)
 		return models.CreateOrder{}, err

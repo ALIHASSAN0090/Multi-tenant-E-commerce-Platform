@@ -1,6 +1,8 @@
 package validation_service_impl
 
 import (
+	"ecommerce-platform/models"
+	"errors"
 	"fmt"
 	"regexp"
 
@@ -35,4 +37,32 @@ func (vs *ValidationServiceImpl) ValidateReq(c *gin.Context, request interface{}
 		return errorMsgs
 	}
 	return errorMsgs
+}
+
+func (vs *ValidationServiceImpl) ValidateOrder(orderData models.CreateOrder) error {
+
+	if orderData.Order.StoreID == 0 {
+		return errors.New("store_id is required")
+	}
+
+	if len(orderData.OrderItems) == 0 {
+		return errors.New("at least one order item is required")
+	}
+
+	itemIDMap := make(map[int64]bool)
+
+	for _, item := range orderData.OrderItems {
+		if item.ID == 0 {
+			return errors.New("order item id is required")
+		}
+		if item.Quantity <= 0 {
+			return errors.New("order item quantity must be greater than zero")
+		}
+		if _, exists := itemIDMap[item.ID]; exists {
+			return errors.New("duplicate order item id found")
+		}
+		itemIDMap[item.ID] = true
+	}
+
+	return nil
 }
