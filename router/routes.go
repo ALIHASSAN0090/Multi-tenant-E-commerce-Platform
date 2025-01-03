@@ -39,7 +39,7 @@ func (r *Router) SetupRoutes() {
 		userGroup.GET("/stores", r.GetStores)
 		userGroup.GET("/store/:id", r.GetStoreAndItems)
 		userGroup.GET("/store/item/:id", r.GetStoreItem)
-		userGroup.POST("/create/order", r.CreateOrder)
+		userGroup.POST("/order", r.CreateOrder)
 	}
 
 	publicGroup := r.Engine.Group("/public")
@@ -48,5 +48,7 @@ func (r *Router) SetupRoutes() {
 		publicGroup.GET("/health-check", r.HealthCheck)
 		publicGroup.POST("/signup", r.SignUp)
 		publicGroup.POST("/login", r.Login)
+		publicGroup.POST("/oauth/login", r.GoogleLogin)
+		// publicGroup.GET("/callback", r.OauthCallback)
 	}
 }

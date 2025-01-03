@@ -1,13 +1,39 @@
 package router
 
 import (
+	config "ecommerce-platform/configs"
 	"ecommerce-platform/models"
 	"ecommerce-platform/utils"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
+
+var (
+	googleOauthConfig *oauth2.Config
+	oauthStateString  = utils.GenerateRandomString(32)
+)
+
+func (r *Router) GoogleLogin(c *gin.Context) {
+
+	googleOauthConfig := &oauth2.Config{
+		RedirectURL:  fmt.Sprintf("http://%s:%s/public/callback", config.AppConfig.DB_HOST, config.AppConfig.APP_ADDRESS),
+		ClientID:     os.Getenv("OAUTH_GOOGLE_CLIENT_ID"),
+		ClientSecret: os.Getenv("OAUTH_GOOGLE_CLIENT_SECRET"),
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email"},
+		Endpoint:     google.Endpoint,
+	}
+
+	url := googleOauthConfig.AuthCodeURL(oauthStateString, oauth2.AccessTypeOffline)
+
+	fmt.Print(url)
+	c.Redirect(http.StatusTemporaryRedirect, url)
+
+}
 
 func (r *Router) SignUp(c *gin.Context) {
 	var req models.SignUpReq

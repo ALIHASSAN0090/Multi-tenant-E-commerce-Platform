@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"net/http"
 	"reflect"
@@ -97,4 +99,13 @@ func GetContextId(c *gin.Context) (int64, error) {
 	}
 
 	return int64(idUint), nil
+}
+
+func GenerateRandomString(n int) string {
+	b := make([]byte, n)
+	_, err := rand.Read(b)
+	if err != nil {
+		return ""
+	}
+	return base64.URLEncoding.EncodeToString(b)
 }
