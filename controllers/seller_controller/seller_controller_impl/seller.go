@@ -27,6 +27,14 @@ func NewSellerImpl(input SellerController) seller_controller.SellerController {
 	}
 }
 
+func (sc *SellerControllerImpl) GetAllOrders(c *gin.Context, user_id int64) ([]models.Order, error) {
+
+	store_id, err := sc.SellerDao.GetStoreIDByUserID(user_id)
+	utils.HandleError(err)
+
+	return sc.SellerDao.GetAllOrders(store_id)
+}
+
 func (sc *SellerControllerImpl) GetStoreItems(seller_id int64) ([]models.Item, error) {
 
 	return sc.SellerDao.GetStoreItemsDB(seller_id)

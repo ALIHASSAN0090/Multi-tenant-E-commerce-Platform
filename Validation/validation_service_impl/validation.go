@@ -12,8 +12,21 @@ import (
 
 type ValidationServiceImpl struct{}
 
+func (vs *ValidationServiceImpl) ValidateOauthCreds(req models.OauthUserInfo) bool {
+	if req.Email == "" {
+		return false
+	}
+	if !req.VerifiedEmail {
+		return false
+	}
+	return true
+}
+
 func (vs *ValidationServiceImpl) ValidateEmailPassword(fl validator.FieldLevel) bool {
 	value := fl.Field().String()
+	if value == "" {
+		return false
+	}
 	match, _ := regexp.MatchString("^[a-zA-Z0-9]+$", value)
 	return match
 }

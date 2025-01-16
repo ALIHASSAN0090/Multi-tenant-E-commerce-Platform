@@ -1,5 +1,7 @@
 .env
+.env.dev
 schema.sql
 build/
 go.mod
 go.sum
+ecommerce-platform

@@ -1,47 +1,44 @@
-// config/config.go
 package config
 
 import (
-	"ecommerce-platform/models"
-	"ecommerce-platform/utils"
-	"fmt"
-	"log"
-	"reflect"
+	"os"
+
+	"github.com/spf13/viper"
 )
 
-var AppConfig = models.IConfig{}
-
-func InitializeConfig(c *models.IConfig) error {
-	c.RawVars = make(map[string]string)
-	v := reflect.ValueOf(c).Elem()
-	t := reflect.TypeOf(c).Elem()
-
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		envTag := field.Tag.Get("env")
-		requiredTag := field.Tag.Get("required")
-		defaultTag := field.Tag.Get("default")
-
-		if envTag == "" {
-			continue
-		}
-
-		value := utils.GetEnvValue(envTag, defaultTag)
-		if requiredTag == "true" && value == "" {
-			return fmt.Errorf("missing required environment variable: %v", envTag)
-		}
-
-		c.RawVars[envTag] = value
-		if err := utils.SetFieldValue(v.Field(i), value, envTag); err != nil {
-			return err
-		}
-	}
-
-	return nil
+type Config struct {
+	Host               string `mapstructure:"HOST"`
+	Port               int    `mapstructure:"PORT"`
+	PGPort             int    `mapstructure:"PG_PORT"`
+	PGDB               string `mapstructure:"PG_DB"`
+	PGUser             string `mapstructure:"PG_USER"`
+	PGPassword         string `mapstructure:"PG_PASSWORD"`
+	SSLMode            string `mapstructure:"PG_SSL_MODE"`
+	JWTSecret          string `mapstructure:"JWT_SECRET"`
+	AdminEmail         string `mapstructure:"ADMIN_DEFAULT_EMAIL"`
+	AdminPassword      string `mapstructure:"ADMIN_DEFAULT_PASSWORD"`
+	AdminRole          string `mapstructure:"ADMIN_ROLE"`
+	GoogleClientID     string `mapstructure:"OAUTH_GOOGLE_CLIENT_ID"`
+	GoogleClientSecret string `mapstructure:"OAUTH_GOOGLE_CLIENT_SECRET"`
 }
 
-func InitConfig() {
-	if err := InitializeConfig(&AppConfig); err != nil {
-		log.Fatalf("Configuration initialization failed: %v", err)
+var Cfg Config
+
+func LoadConfig() error {
+	viper.AddConfigPath("./")
+	if os.Getenv("ENV") == "prod" {
+		viper.SetConfigName(".env.prod")
+	} else if os.Getenv("ENV") == "staging" {
+		viper.SetConfigName(".env.staging")
+	} else {
+		viper.SetConfigName(".env.dev")
 	}
+	viper.SetConfigType("env")
+	err := viper.ReadInConfig()
+	viper.AutomaticEnv()
+	if err != nil {
+		return err
+	}
+	err = viper.Unmarshal(&Cfg)
+	return err
 }

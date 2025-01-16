@@ -5,7 +5,9 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"os/exec"
 	"reflect"
+	"runtime"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -108,4 +110,22 @@ func GenerateRandomString(n int) string {
 		return ""
 	}
 	return base64.URLEncoding.EncodeToString(b)
+}
+
+func OpenURLInBrowser(url string) error {
+	var err error
+	switch runtime.GOOS {
+	case "linux":
+		err = exec.Command("xdg-open", url).Start()
+	case "windows":
+		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+	case "darwin":
+		err = exec.Command("open", url).Start()
+	default:
+		err = fmt.Errorf("unsupported platform")
+	}
+	if err != nil {
+		return fmt.Errorf("could not open URL in the browser: %w", err)
+	}
+	return nil
 }

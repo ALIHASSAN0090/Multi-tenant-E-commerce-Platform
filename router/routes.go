@@ -27,6 +27,7 @@ func (r *Router) SetupRoutes() {
 		sellerGroup.POST("/item", r.CreateItem)
 		sellerGroup.PATCH("/item/:id", r.UpdateItem)
 		sellerGroup.GET("/store", r.GetStore)
+		sellerGroup.GET("/orders", r.GetAllOrders)
 
 	}
 
@@ -49,6 +50,6 @@ func (r *Router) SetupRoutes() {
 		publicGroup.POST("/signup", r.SignUp)
 		publicGroup.POST("/login", r.Login)
 		publicGroup.POST("/oauth/login", r.GoogleLogin)
-		// publicGroup.GET("/callback", r.OauthCallback)
+		publicGroup.GET("/callback", r.HandleoauthCallback)
 	}
 }

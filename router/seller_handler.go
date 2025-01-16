@@ -2,12 +2,38 @@ package router
 
 import (
 	"ecommerce-platform/models"
+	"ecommerce-platform/utils"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
+func (r *Router) GetAllOrders(c *gin.Context) {
+
+	id, err := utils.GetContextId(c)
+	utils.HandleError(err)
+
+	data, err := r.SellerController.GetAllOrders(c, id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error in getting orders Data",
+				Detail:     err.Error(),
+			},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models.SuccessResponse{
+		Data:       data,
+		Message:    "Orders Data fetched Successfully",
+		SubMessage: "Orders Data fetched Successfully",
+		StatusCode: http.StatusOK,
+	})
+
+}
 func (r *Router) GetStoreItems(c *gin.Context) {
 
 	sellerID, valid := GetContextID(c)

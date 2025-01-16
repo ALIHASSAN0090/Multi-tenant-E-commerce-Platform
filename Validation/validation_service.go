@@ -12,6 +12,7 @@ type ValidationService interface {
 	ValidateReq(c *gin.Context, request interface{}) []string
 	ValidateEmailPassword(fl validator.FieldLevel) bool
 	ValidateOrder(orderData models.CreateOrder) error
+	ValidateOauthCreds(req models.OauthUserInfo) bool
 }
 
 func NewValidationService() ValidationService {

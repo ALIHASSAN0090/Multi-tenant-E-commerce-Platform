@@ -18,6 +18,34 @@ func NewSellerDao(db *sql.DB) *SellerDaoImpl {
 	}
 }
 
+func (s *SellerDaoImpl) GetAllOrders(store_id int64) ([]models.Order, error) {
+
+	query := `SELECT id, user_id, store_id, total_price, status, created_at, created_by FROM orders WHERE store_id = $1`
+
+	rows, err := s.db.Query(query, store_id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var allOrders []models.Order
+
+	for rows.Next() {
+		var order models.Order
+		if err := rows.Scan(&order.ID, &order.UserID, &order.StoreID, &order.TotalPrice, &order.Status, &order.CreatedAt, &order.CreatedBy); err != nil {
+			return nil, err
+		}
+
+		allOrders = append(allOrders, order)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return allOrders, nil
+}
+
 func (s *SellerDaoImpl) GetStoreItemsDB(sellerID int64) ([]models.Item, error) {
 	storeID, err := s.GetStoreIDByUserID(sellerID)
 	if err != nil || storeID == 0 {

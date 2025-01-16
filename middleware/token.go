@@ -10,7 +10,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-var jwtSecret = []byte(configs.AppConfig.JWT_SECRET)
+var jwtSecret = []byte(configs.Cfg.JWTSecret)
 
 const (
 	TokenHeaderKey          = "Authorization"

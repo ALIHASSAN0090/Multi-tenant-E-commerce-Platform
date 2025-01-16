@@ -38,9 +38,11 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 
 	logger.Info("Executing Api Command !")
 
-	config.InitConfig()
+	if err := config.LoadConfig(); err != nil {
+		logger.Fatal("Failed to load config: ", err)
+	}
 
-	fmt.Println(config.AppConfig.DB_DATABASE, "dbname")
+	fmt.Println(config.Cfg.Host, "PG_HOST")
 
 	postgresDB, err := app.ConnectToPostgres()
 	if err != nil {
@@ -92,7 +94,7 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGABRT, os.Interrupt)
 
 	Server := &http.Server{
-		Addr:    fmt.Sprintf(":%s", config.AppConfig.APP_ADDRESS),
+		Addr:    fmt.Sprintf(":%d", config.Cfg.Port),
 		Handler: router.Engine,
 	}
 

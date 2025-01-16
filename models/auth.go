@@ -31,3 +31,9 @@ type Users struct {
 	CreatedAt   time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at,omitempty" db:"updated_at"`
 }
+
+type OauthUserInfo struct {
+	Email         string `json:"email" db:"email"`
+	VerifiedEmail bool   `json:"verified_email" db:"verified_email"`
+	Picture       string `json:"picture" db:"picture"`
+}

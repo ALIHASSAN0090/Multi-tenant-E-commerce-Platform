@@ -34,6 +34,11 @@ func NewAuthService(input NewAuthServiceImpl) authservice.AuthService {
 	}
 }
 
+func (a *AuthServiceImpl) OauthSetup(ctx *gin.Context, req *models.OauthUserInfo) (string, error) {
+
+	return "", nil
+}
+
 func (a *AuthServiceImpl) SignUp(ctx *gin.Context, req *models.Users) (*models.Users, string, error) {
 	a.logger.Info("Initiating SignUp process")
 

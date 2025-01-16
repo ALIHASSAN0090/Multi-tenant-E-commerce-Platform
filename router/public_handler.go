@@ -1,12 +1,13 @@
 package router
 
 import (
+	"context"
 	config "ecommerce-platform/configs"
 	"ecommerce-platform/models"
 	"ecommerce-platform/utils"
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/oauth2"
@@ -14,25 +15,78 @@ import (
 )
 
 var (
-	googleOauthConfig *oauth2.Config
-	oauthStateString  = utils.GenerateRandomString(32)
+	oauthStateString = config.Cfg.JWTSecret
 )
+
+var googleOauthConfig = &oauth2.Config{
+	RedirectURL:  "http://localhost:8005/public/callback",
+	ClientID:     config.Cfg.GoogleClientID,
+	ClientSecret: config.Cfg.GoogleClientSecret,
+	Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email"},
+	Endpoint:     google.Endpoint,
+}
 
 func (r *Router) GoogleLogin(c *gin.Context) {
 
-	googleOauthConfig := &oauth2.Config{
-		RedirectURL:  fmt.Sprintf("http://%s:%s/public/callback", config.AppConfig.DB_HOST, config.AppConfig.APP_ADDRESS),
-		ClientID:     os.Getenv("OAUTH_GOOGLE_CLIENT_ID"),
-		ClientSecret: os.Getenv("OAUTH_GOOGLE_CLIENT_SECRET"),
-		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email"},
-		Endpoint:     google.Endpoint,
-	}
-
 	url := googleOauthConfig.AuthCodeURL(oauthStateString, oauth2.AccessTypeOffline)
+	fmt.Println("client id is : ", googleOauthConfig.ClientID)
 
 	fmt.Print(url)
-	c.Redirect(http.StatusTemporaryRedirect, url)
+	utils.OpenURLInBrowser(url)
 
+}
+
+func (r *Router) HandleoauthCallback(c *gin.Context) {
+
+	if c.Query("state") != oauthStateString {
+		fmt.Println("state is not valid")
+		c.Redirect(http.StatusTemporaryRedirect, "/")
+		return
+	}
+
+	token, err := googleOauthConfig.Exchange(context.Background(), c.Query("code"))
+	if err != nil {
+		fmt.Printf("Could not get token: %s\n", err.Error())
+		c.Redirect(http.StatusTemporaryRedirect, "/")
+		return
+	}
+
+	client := googleOauthConfig.Client(context.Background(), token)
+	response, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
+	if err != nil {
+		fmt.Printf("Could not create get request: %s\n", err.Error())
+		c.Redirect(http.StatusTemporaryRedirect, "/")
+		return
+	}
+
+	defer response.Body.Close()
+
+	var userInfo models.OauthUserInfo
+	err = json.NewDecoder(response.Body).Decode(&userInfo)
+	if err != nil {
+		fmt.Printf("Could not decode userinfo: %s\n", err.Error())
+		c.Redirect(http.StatusTemporaryRedirect, "/")
+		return
+	}
+
+	valid := r.Val.ValidateOauthCreds(userInfo)
+	if !valid {
+		return
+	}
+
+	Jwttoken, err := r.AuthService.OauthSetup(c, &userInfo)
+	if err == nil {
+		c.JSON(http.StatusOK, models.TokenResponse{
+			Token:      Jwttoken,
+			Message:    "Login successful",
+			StatusCode: http.StatusOK,
+		})
+	} else {
+		c.JSON(http.StatusUnauthorized, models.TokenResponse{
+			Message:    "Invalid credentials",
+			StatusCode: http.StatusUnauthorized,
+		})
+	}
 }
 
 func (r *Router) SignUp(c *gin.Context) {
