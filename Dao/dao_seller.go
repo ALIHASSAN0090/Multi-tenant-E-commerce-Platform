@@ -18,6 +18,76 @@ func NewSellerDao(db *sql.DB) *SellerDaoImpl {
 	}
 }
 
+func (s *SellerDaoImpl) GetOrderItemsByOrderId(order_id int64) ([]models.ItemResponce, error) {
+
+	query := `SELECT i.item_img, o.order_id, o.item_id, i.name AS item_name, i.stock_quantity, i.discount, o.quantity, o.price_per_item 
+			  FROM order_items AS o
+			  JOIN items AS i ON i.id = o.item_id
+			  WHERE o.order_id = $1`
+
+	rows, err := s.db.Query(query, order_id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var items []models.ItemResponce
+
+	for rows.Next() {
+		var item models.ItemResponce
+		if err := rows.Scan(&item.ItemImg, &item.OrderID, &item.ItemID, &item.ItemName, &item.StockQuantity, &item.Discount, &item.Quantity, &item.PricePerItem); err != nil {
+			return nil, err
+		}
+		items = append(items, item)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return items, nil
+}
+
+func (s *SellerDaoImpl) GetCustomerNameByOrderId(order_id int64) (string, error) {
+
+	query := `SELECT u.name FROM orders AS o
+              JOIN users AS u
+              ON u.id = o.user_id
+              WHERE o.id = $1`
+
+	var name string
+	err := s.db.QueryRow(query, order_id).Scan(&name)
+	if err != nil {
+		return "", err
+	}
+
+	return name, nil
+}
+
+func (s *SellerDaoImpl) GetOrderByOrderId(order_id int64) (models.Order, error) {
+
+	query := `SELECT id, user_id, store_id, total_price, status, created_at, updated_at, deleted_at, created_by, updated_by FROM orders WHERE id = $1`
+
+	var order models.Order
+	err := s.db.QueryRow(query, order_id).Scan(
+		&order.ID,
+		&order.UserID,
+		&order.StoreID,
+		&order.TotalPrice,
+		&order.Status,
+		&order.CreatedAt,
+		&order.UpdatedAt,
+		&order.DeletedAt,
+		&order.CreatedBy,
+		&order.UpdatedBy,
+	)
+	if err != nil {
+		return models.Order{}, err
+	}
+
+	return order, nil
+}
+
 func (s *SellerDaoImpl) GetAllOrders(store_id int64) ([]models.Order, error) {
 
 	query := `SELECT id, user_id, store_id, total_price, status, created_at, created_by FROM orders WHERE store_id = $1`

@@ -29,9 +29,7 @@ var googleOauthConfig = &oauth2.Config{
 func (r *Router) GoogleLogin(c *gin.Context) {
 
 	url := googleOauthConfig.AuthCodeURL(oauthStateString, oauth2.AccessTypeOffline)
-	fmt.Println("client id is : ", googleOauthConfig.ClientID)
 
-	fmt.Print(url)
 	utils.OpenURLInBrowser(url)
 
 }
@@ -39,14 +37,12 @@ func (r *Router) GoogleLogin(c *gin.Context) {
 func (r *Router) HandleoauthCallback(c *gin.Context) {
 
 	if c.Query("state") != oauthStateString {
-		fmt.Println("state is not valid")
 		c.Redirect(http.StatusTemporaryRedirect, "/")
 		return
 	}
 
 	token, err := googleOauthConfig.Exchange(context.Background(), c.Query("code"))
 	if err != nil {
-		fmt.Printf("Could not get token: %s\n", err.Error())
 		c.Redirect(http.StatusTemporaryRedirect, "/")
 		return
 	}
@@ -54,7 +50,6 @@ func (r *Router) HandleoauthCallback(c *gin.Context) {
 	client := googleOauthConfig.Client(context.Background(), token)
 	response, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
-		fmt.Printf("Could not create get request: %s\n", err.Error())
 		c.Redirect(http.StatusTemporaryRedirect, "/")
 		return
 	}
@@ -64,7 +59,6 @@ func (r *Router) HandleoauthCallback(c *gin.Context) {
 	var userInfo models.OauthUserInfo
 	err = json.NewDecoder(response.Body).Decode(&userInfo)
 	if err != nil {
-		fmt.Printf("Could not decode userinfo: %s\n", err.Error())
 		c.Redirect(http.StatusTemporaryRedirect, "/")
 		return
 	}

@@ -133,6 +133,12 @@ type CreateOrder struct {
 	OrderItems []OrderItem `json:"order_items" db:"order_items"`
 }
 
+type OrderResponce struct {
+	CustomerName string         `json:"customer_name" db:"customer_name"`
+	Order        Order          `json:"order" db:"order"`
+	Items        []ItemResponce `json:"order_items" db:"order_items"`
+}
+
 // Payment model
 type Payment struct {
 	ID            int64      `json:"id" db:"id"`

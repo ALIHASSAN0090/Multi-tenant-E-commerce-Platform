@@ -9,8 +9,8 @@ import (
 )
 
 func ConnectToPostgres() (*sql.DB, error) {
-	dbconnection := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		config.AppConfig.DB_USERNAME, config.AppConfig.DB_PASSWORD, config.AppConfig.DB_HOST, config.AppConfig.DB_PORT, config.AppConfig.DB_DATABASE, config.AppConfig.DB_SSL_MODE)
+	dbconnection := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+		config.Cfg.Host, config.Cfg.PGPort, config.Cfg.PGUser, config.Cfg.PGPassword, config.Cfg.PGDB, config.Cfg.SSLMode)
 
 	db, err := sql.Open("postgres", dbconnection)
 	if err != nil {

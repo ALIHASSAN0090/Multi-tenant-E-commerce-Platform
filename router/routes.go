@@ -28,6 +28,7 @@ func (r *Router) SetupRoutes() {
 		sellerGroup.PATCH("/item/:id", r.UpdateItem)
 		sellerGroup.GET("/store", r.GetStore)
 		sellerGroup.GET("/orders", r.GetAllOrders)
+		sellerGroup.GET("order/:id", r.GetOrderByOrderId)
 
 	}
 

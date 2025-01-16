@@ -9,6 +9,41 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func (r *Router) GetOrderByOrderId(c *gin.Context) {
+
+	//id of order table
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error in getting order id ",
+				Detail:     err.Error(),
+			},
+		})
+		return
+	}
+
+	data, err := r.SellerController.GetOrderByOrderId(c, id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error in getting order Data",
+				Detail:     err.Error(),
+			},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models.SuccessResponse{
+		Data:       data,
+		Message:    "Order Data fetched Successfully",
+		SubMessage: "Order Data fetched Successfully",
+		StatusCode: http.StatusOK,
+	})
+}
+
 func (r *Router) GetAllOrders(c *gin.Context) {
 
 	id, err := utils.GetContextId(c)

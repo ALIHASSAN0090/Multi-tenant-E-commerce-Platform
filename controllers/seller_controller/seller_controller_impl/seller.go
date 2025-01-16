@@ -27,6 +27,23 @@ func NewSellerImpl(input SellerController) seller_controller.SellerController {
 	}
 }
 
+func (sc *SellerControllerImpl) GetOrderByOrderId(c *gin.Context, order_id int64) (models.OrderResponce, error) {
+
+	customer_name, err := sc.SellerDao.GetCustomerNameByOrderId(order_id)
+	utils.HandleError(err)
+	order, err := sc.SellerDao.GetOrderByOrderId(order_id)
+	utils.HandleError(err)
+	order_items, err := sc.SellerDao.GetOrderItemsByOrderId(order_id)
+	utils.HandleError(err)
+
+	data := models.OrderResponce{
+		CustomerName: customer_name,
+		Order:        order,
+		Items:        order_items,
+	}
+
+	return data, nil
+}
 func (sc *SellerControllerImpl) GetAllOrders(c *gin.Context, user_id int64) ([]models.Order, error) {
 
 	store_id, err := sc.SellerDao.GetStoreIDByUserID(user_id)

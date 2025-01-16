@@ -37,4 +37,7 @@ type SellerDao interface {
 	GetStore(sellerID int64) (models.Store, error)
 	IsActive(c *gin.Context, seller_id int64) (bool, error)
 	GetAllOrders(store_id int64) ([]models.Order, error)
+	GetOrderByOrderId(order_id int64) (models.Order, error)
+	GetCustomerNameByOrderId(order_id int64) (string, error)
+	GetOrderItemsByOrderId(order_id int64) ([]models.ItemResponce, error)
 }

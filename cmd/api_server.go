@@ -42,8 +42,6 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 		logger.Fatal("Failed to load config: ", err)
 	}
 
-	fmt.Println(config.Cfg.Host, "PG_HOST")
-
 	postgresDB, err := app.ConnectToPostgres()
 	if err != nil {
 		logger.Fatal(err)
