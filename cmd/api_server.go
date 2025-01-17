@@ -67,9 +67,10 @@ func ExecuteApi(cmd *cobra.Command, args []string) {
 	logger.Info("Starting Api Server")
 
 	AuthService := AuthServiceImpl.NewAuthService(AuthServiceImpl.NewAuthServiceImpl{
-		Logger:  logger,
-		AuthDao: AuthDao,
-		DB:      postgresDB,
+		Logger:    logger,
+		AuthDao:   AuthDao,
+		DB:        postgresDB,
+		SellerDao: SellerDao,
 	})
 	AdminController := AdminControllerImpl.NewAdminController(AdminControllerImpl.NewAdminControllerImpl{
 		Logger:   logger,

@@ -12,6 +12,14 @@ import (
 
 type ValidationServiceImpl struct{}
 
+func (vs *ValidationServiceImpl) ValidateFilter(filter string) error {
+
+	if filter == "" || filter == "pending" || filter == "completed" {
+		return nil
+	}
+	return errors.New("invalid filter value")
+}
+
 func (vs *ValidationServiceImpl) ValidateOauthCreds(req models.OauthUserInfo) bool {
 	if req.Email == "" {
 		return false

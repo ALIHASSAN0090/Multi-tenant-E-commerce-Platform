@@ -12,6 +12,6 @@ type SellerController interface {
 	UpdateStoreItem(c *gin.Context, id int64, item models.Item) (models.Item, error)
 	CreateItem(c *gin.Context, seller_id int64, item models.Item) (models.Item, error)
 	GetStore(c *gin.Context, seller_id int64) (models.Store, error)
-	GetAllOrders(c *gin.Context, user_id int64) ([]models.Order, error)
+	GetAllOrders(c *gin.Context, user_id int64, filter string) ([]models.Order, error)
 	GetOrderByOrderId(c *gin.Context, order_id int64) (models.OrderResponce, error)
 }

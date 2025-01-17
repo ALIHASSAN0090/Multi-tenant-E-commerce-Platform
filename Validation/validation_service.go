@@ -13,6 +13,7 @@ type ValidationService interface {
 	ValidateEmailPassword(fl validator.FieldLevel) bool
 	ValidateOrder(orderData models.CreateOrder) error
 	ValidateOauthCreds(req models.OauthUserInfo) bool
+	ValidateFilter(filter string) error
 }
 
 func NewValidationService() ValidationService {

@@ -46,10 +46,22 @@ func (r *Router) GetOrderByOrderId(c *gin.Context) {
 
 func (r *Router) GetAllOrders(c *gin.Context) {
 
+	filter := c.Query("filter")
 	id, err := utils.GetContextId(c)
 	utils.HandleError(err)
 
-	data, err := r.SellerController.GetAllOrders(c, id)
+	if err := r.Val.ValidateFilter(filter); err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: models.Error{
+				StatusCode: http.StatusInternalServerError,
+				Message:    "Error in validating filter",
+				Detail:     err.Error(),
+			},
+		})
+		return
+	}
+
+	data, err := r.SellerController.GetAllOrders(c, id, filter)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
 			Error: models.Error{

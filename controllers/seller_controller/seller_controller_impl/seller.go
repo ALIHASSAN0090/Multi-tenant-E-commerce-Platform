@@ -44,12 +44,12 @@ func (sc *SellerControllerImpl) GetOrderByOrderId(c *gin.Context, order_id int64
 
 	return data, nil
 }
-func (sc *SellerControllerImpl) GetAllOrders(c *gin.Context, user_id int64) ([]models.Order, error) {
+func (sc *SellerControllerImpl) GetAllOrders(c *gin.Context, user_id int64, filter string) ([]models.Order, error) {
 
 	store_id, err := sc.SellerDao.GetStoreIDByUserID(user_id)
 	utils.HandleError(err)
 
-	return sc.SellerDao.GetAllOrders(store_id)
+	return sc.SellerDao.GetAllOrders(store_id, filter)
 }
 
 func (sc *SellerControllerImpl) GetStoreItems(seller_id int64) ([]models.Item, error) {

@@ -15,22 +15,25 @@ import (
 )
 
 type AuthServiceImpl struct {
-	logger  logger.IAppLogger
-	authDao dao.AuthDao
-	db      *sql.DB
+	logger    logger.IAppLogger
+	authDao   dao.AuthDao
+	db        *sql.DB
+	sellerDao dao.SellerDao
 }
 
 type NewAuthServiceImpl struct {
-	Logger  logger.IAppLogger
-	AuthDao dao.AuthDao
-	DB      *sql.DB
+	Logger    logger.IAppLogger
+	AuthDao   dao.AuthDao
+	DB        *sql.DB
+	SellerDao dao.SellerDao
 }
 
 func NewAuthService(input NewAuthServiceImpl) authservice.AuthService {
 	return &AuthServiceImpl{
-		logger:  input.Logger,
-		authDao: input.AuthDao,
-		db:      input.DB,
+		logger:    input.Logger,
+		authDao:   input.AuthDao,
+		db:        input.DB,
+		sellerDao: input.SellerDao,
 	}
 }
 
@@ -106,6 +109,16 @@ func (a *AuthServiceImpl) ProcessLogin(ctx *gin.Context, req *models.LoginReq) (
 	if !passwordMatch {
 		a.logger.Info("Password verification failed: ", msg)
 		return "", fmt.Errorf("invalid credentials")
+	}
+
+	if user.Role == "seller" {
+		active, err := a.sellerDao.IsActive(ctx, user.ID)
+		if err != nil {
+			return "", fmt.Errorf("error checking account status")
+		}
+		if !active {
+			return "", fmt.Errorf("account status inactive")
+		}
 	}
 
 	token, err := middleware.GenerateAccessToken(&user)

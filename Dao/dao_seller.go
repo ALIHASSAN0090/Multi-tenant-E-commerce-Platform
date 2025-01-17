@@ -88,17 +88,24 @@ func (s *SellerDaoImpl) GetOrderByOrderId(order_id int64) (models.Order, error) 
 	return order, nil
 }
 
-func (s *SellerDaoImpl) GetAllOrders(store_id int64) ([]models.Order, error) {
+func (s *SellerDaoImpl) GetAllOrders(store_id int64, filter string) ([]models.Order, error) {
+	var query string
+	var rows *sql.Rows
+	var err error
+	var allOrders []models.Order
 
-	query := `SELECT id, user_id, store_id, total_price, status, created_at, created_by FROM orders WHERE store_id = $1`
+	if filter == "" {
+		query = `SELECT id, user_id, store_id, total_price, status, created_at, created_by FROM orders WHERE store_id = $1`
+		rows, err = s.db.Query(query, store_id)
+	} else {
+		query = `SELECT id, user_id, store_id, total_price, status, created_at, created_by FROM orders WHERE store_id = $1 AND status = $2`
+		rows, err = s.db.Query(query, store_id, filter)
+	}
 
-	rows, err := s.db.Query(query, store_id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-
-	var allOrders []models.Order
 
 	for rows.Next() {
 		var order models.Order
